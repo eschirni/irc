@@ -41,9 +41,30 @@ int main(int argc, char **argv)
 	}
 	int tmp_len = sizeof(address);
 	int new_socket = accept(sockfd, (struct sockaddr*)&address, (socklen_t*)&tmp_len);
+	if (new_socket < 0)
+	{
+		std::cerr << "accept() failed" << std::endl;
+		std::cerr << "errno: " << strerror(errno) << std::endl;
+		close(sockfd);
+		return EXIT_FAILURE;
+	}
 	char buffer[1024] = { 0 };
-	read(new_socket, buffer, 1024);
-	send(new_socket, argv[2], strlen(argv[2]), 0);
+	rc = read(new_socket, buffer, 1024);
+	{
+		std::cerr << "read() failed" << std::endl;
+		std::cerr << "errno: " << strerror(errno) << std::endl;
+		close(sockfd);
+		close(new_socket);
+		return EXIT_FAILURE;
+	}
+	rc = send(new_socket, argv[2], strlen(argv[2]), 0);
+	{
+		std::cerr << "read() failed" << std::endl;
+		std::cerr << "errno: " << strerror(errno) << std::endl;
+		close(sockfd);
+		close(new_socket);
+		return EXIT_FAILURE;
+	}
 	close(new_socket);
 	shutdown(sockfd, SHUT_RDWR);
 	return EXIT_SUCCESS;
