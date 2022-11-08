@@ -1,17 +1,6 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: eschirni <eschirni@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/04/27 14:45:54 by eschirni          #+#    #+#              #
-#    Updated: 2022/11/07 16:38:23 by eschirni         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 # FLAGS
-CFLAGS = -Wall -Wextra -Werror -std=c++98 -Wshadow -Wno-shadow
+CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -Wshadow -Wno-shadow #-g
+CXX = @c++
 
 # COLORS
 R = \033[31m
@@ -53,13 +42,13 @@ all: $(NAME)
 $(OBJ_PATH)%.o :$(SRC_PATH)%.c
 	@echo $(Y)Compiling [$@]...$(X)
 	@mkdir -p $(dir $@)
-	@c++ $(CFLAGS) -c -o $@ $<
+	@$(CXX) $(CPPFLAGS) -c -o $@ $<
 	@echo $(G)Finished [$@]$(X)
 
 $(NAME): $(OBJ)
 	@echo $(Y)Compiling [$(SRC)]
 	@echo into [$(NAME)]...$(X)
-	@c++ $(CFLAGS) $(OBJ) -o $(NAME)
+	@$(CXX) $(CPPFLAGS) $(OBJ) -o $(NAME)
 	@echo $(G)Finished [$(NAME)]$(X)
 
 clean:
