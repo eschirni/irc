@@ -50,6 +50,7 @@ int main(int argc, char **argv)
 	}
 	char buffer[1024] = { 0 };
 	rc = read(new_socket, buffer, 1024);
+	if (rc < 0)
 	{
 		std::cerr << "read() failed" << std::endl;
 		std::cerr << "errno: " << strerror(errno) << std::endl;
@@ -58,8 +59,9 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 	rc = send(new_socket, argv[2], strlen(argv[2]), 0);
+	if (rc < 0)
 	{
-		std::cerr << "read() failed" << std::endl;
+		std::cerr << "send() failed" << std::endl;
 		std::cerr << "errno: " << strerror(errno) << std::endl;
 		close(sockfd);
 		close(new_socket);
