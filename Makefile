@@ -1,5 +1,5 @@
 # FLAGS
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -Wshadow -Wno-shadow #-g
+CPPFLAGS = -Wall -Wextra -std=c++98 -Wshadow -Wno-shadow #-g #-Werror
 CXX = @c++
 
 # COLORS
@@ -18,7 +18,7 @@ SRC_PATH = ./
 OBJ_PATH = ./obj/
 
 # SOURCES
-SRC = main.cpp
+SRC = $(shell find . -iname "*.cpp")
 
 # OBJECTS
 OBJ = $(patsubst $(SRC_PATH)%.c, $(OBJ_PATH)%.o, $(SRC))
