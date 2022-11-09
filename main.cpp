@@ -11,6 +11,8 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	if (clean_up(data) == EXIT_FAILURE)
 		return EXIT_FAILURE;
+	error(errno);
+	error("TEST");
 
 	std::cout << "EXIT_SUCCESS" << std::endl;
 	return EXIT_SUCCESS;
