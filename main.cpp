@@ -2,16 +2,17 @@
 
 int main(int argc, char **argv)
 {
-	t_data				*data = 0;
+	t_serv serv;
 
-	// TODO if argc
-	if (initialization(data) == EXIT_FAILURE)
-		return EXIT_FAILURE;
-	if (irc_loop(data) == EXIT_FAILURE)
-		return EXIT_FAILURE;
-	if (clean_up(data) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+	if (argc != 3)
+		return error();
+	if (initialization(&serv) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	if (irc_loop(&serv) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	if (clean_up(&serv) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 
-	std::cout << "EXIT_SUCCESS" << std::endl;
-	return EXIT_SUCCESS;
+	std::cout << "EXIT_SUCCESS" << std::endl; //debug
+	return (EXIT_SUCCESS);
 }

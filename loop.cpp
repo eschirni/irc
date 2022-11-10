@@ -1,6 +1,6 @@
 #include "irc.hpp"
 
-int	irc_loop(t_data* data)
+int	irc_loop(t_serv* serv)
 {
-	return EXIT_SUCCESS;
+	return (EXIT_SUCCESS);
 }
