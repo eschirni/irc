@@ -9,10 +9,16 @@ int	initialization(t_serv* serv)
 		return (error());
 	return_code = fcntl(serv->listen_sd, F_SETFL, O_NONBLOCK);
 	if (return_code < 0)
-		return (serv->listen_sd, error());
+		return (close(serv->listen_sd), error());
+	memset(&serv->address, 0, sizeof(serv->address));
+	serv->address.sin_family = AF_INET;
+	serv->address.sin_port = htons(420);
+	return_code = bind(serv->listen_sd, (struct sockaddr *)&serv->address, sizeof(serv->address));
+	if (return_code < 0)
+		return (close(serv->listen_sd), error());
 	return_code = listen(serv->listen_sd, 0);
 	if (return_code < 0)
-		return(serv->listen_sd, error());
+		return (close(serv->listen_sd), error());
 	memset(serv->fds, 0, sizeof(serv->fds)); //sets fd array elements to 0
 	serv->fds[0].fd = serv->listen_sd; //dunno if needed
 	serv->fds[0].events = POLLIN;

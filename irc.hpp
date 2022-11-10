@@ -18,14 +18,8 @@ typedef struct s_serv
 {
 	int					len;
 	int					listen_sd;
-	int					new_sd;
 	int					timeout;
 	int					n_fds;
-	int					tmp_size;
-	bool				desc_ready;
-	bool				end_server;
-	bool				compress_array;
-	bool				close_conn;
 	char				buffer[80];
 	struct sockaddr_in	address;
 	struct pollfd		fds[200];
