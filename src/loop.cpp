@@ -5,7 +5,7 @@ int	irc_loop(t_serv* serv)
 	int	return_code;
 	int tmp_size;
 	int usr_fd = 0;
-	bool close_conn;
+	bool continue_connection;
 	bool compress_array = false;
 	bool status = true;
 
@@ -30,11 +30,7 @@ int	irc_loop(t_serv* serv)
 					usr_fd = accept(serv->listen_sd, NULL, NULL);
 					if (usr_fd < 0)
 					{
-						if (errno != EWOULDBLOCK)
-						{
-							error(errno);
-							status = true;
-						}
+						status = is_ewouldblock(errno);
 						break;
 					}
 					serv->fds[serv->n_fds].fd = usr_fd;
@@ -44,23 +40,19 @@ int	irc_loop(t_serv* serv)
 			}
 			else
 			{
-				close_conn = false;
+				continue_connection = true;
 				while (true)
 				{
 					return_code = recv(serv->fds[i].fd, serv->buffer, serv->len, 0);
 					if (return_code < 0)
 					{
-						if (errno != EWOULDBLOCK) //recv failure
-						{
-							error(errno);
-							close_conn = true;
-						}
+						continue_connection = is_ewouldblock(errno);
 						break;
 					}
 					else if (return_code == 0) //connection closed by client
 					{
 						error(CCLOSE);
-						close_conn = true;
+						continue_connection = false;
 						break;
 					}
 					serv->len = return_code;
@@ -69,11 +61,11 @@ int	irc_loop(t_serv* serv)
 					if (return_code < 0)
 					{
 						error(errno);
-						close_conn = true;
+						continue_connection = false;
 						break;
 					}
 				}
-				if (close_conn == true)
+				if (continue_connection == false)
 				{
 					close(serv->fds[i].fd);
 					serv->fds[i].fd = -1;

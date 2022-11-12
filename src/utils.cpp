@@ -19,3 +19,13 @@ void	ft_exit(int exit_code)
 	// system("leaks ircserv");
 	exit(exit_code);
 }
+
+bool	is_ewouldblock(int errno_code)
+{
+	if (errno_code != EWOULDBLOCK)
+	{
+		error(errno_code);
+		return false;
+	}
+	return true;
+}
