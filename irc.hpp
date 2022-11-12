@@ -13,6 +13,10 @@
 # include <netinet/in.h>
 # include <unistd.h>
 
+/*	config	*/
+# define TIMEOUT	3 * 60 * 1000	// 3min
+# define PORT		7777
+
 /*	structs	*/
 typedef struct s_serv
 {
