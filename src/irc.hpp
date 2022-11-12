@@ -47,8 +47,9 @@ int		error(const char* error_msg);
 void	ft_exit(int exit_code);
 
 /*	error messages	*/
-# define TIMEOUT	"Poll time out expired"
+# define POLLEXP	"Poll time out expired"
 # define REVENT		"Unexpected return event result"
+# define CCLOSE		"Connection closed by client"
 
 /*	colors	*/
 # define BLK "\e[0;30m"

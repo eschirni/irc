@@ -15,7 +15,7 @@ int	irc_loop(t_serv* serv)
 		if (return_code < 0)
 			return(error(errno)); //for failure
 		else if (return_code == 0) //for timout
-			return (error(TIMEOUT));
+			return (error(POLLEXP));
 		tmp_size = serv->n_fds;
 		for (int i = 0; i < tmp_size; i++)
 		{
@@ -60,7 +60,7 @@ int	irc_loop(t_serv* serv)
 					}
 					else if (return_code == 0) //connection closed by client
 					{
-						error(errno);
+						error(CCLOSE);
 						close_conn = true;
 						break;
 					}
