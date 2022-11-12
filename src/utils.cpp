@@ -29,3 +29,17 @@ bool	is_ewouldblock(int errno_code)
 	}
 	return true;
 }
+
+void	compress_array(t_serv* serv)
+{
+	for (int i = 0; i < serv->n_fds; i++)
+	{
+		if (serv->fds[i].fd == -1)
+		{
+			for (int j = 0; j < serv->n_fds; j++)
+				serv->fds[j].fd = serv->fds[j + 1].fd;
+			i--;
+			serv->n_fds--;
+		}
+	}
+}
