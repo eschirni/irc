@@ -4,12 +4,12 @@ int	irc_loop(t_serv* serv)
 {
 	int	return_code;
 	int tmp_size;
-	int usr_fd;
+	int usr_fd = 0;
 	bool close_conn;
 	bool compress_array = false;
-	bool end_serv = false;
+	bool status = true;
 
-	do
+	while (status)
 	{
 		return_code = poll(serv->fds, serv->n_fds, serv->timeout);
 		if (return_code < 0)
@@ -25,7 +25,7 @@ int	irc_loop(t_serv* serv)
 				return (error(REVENT));
 			else if (serv->fds[i].fd == serv->listen_sd)
 			{
-				do
+				while (usr_fd != -1)
 				{
 					usr_fd = accept(serv->listen_sd, NULL, NULL);
 					if (usr_fd < 0)
@@ -33,15 +33,14 @@ int	irc_loop(t_serv* serv)
 						if (errno != EWOULDBLOCK)
 						{
 							error(errno);
-							end_serv = true;
+							status = true;
 						}
 						break;
 					}
 					serv->fds[serv->n_fds].fd = usr_fd;
 					serv->fds[serv->n_fds].events = POLLIN;
 					serv->n_fds++;
-				} while (usr_fd != -1);
-				
+				}
 			}
 			else
 			{
@@ -97,6 +96,6 @@ int	irc_loop(t_serv* serv)
 			}
 			
 		}
-	} while (end_serv == false);
+	}
 	return (EXIT_SUCCESS);
 }
