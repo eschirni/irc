@@ -14,7 +14,7 @@ X = \033[0m
 NAME = ./ircserv
 
 # PATHS
-SRC_PATH = ./
+SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 
 # SOURCES
