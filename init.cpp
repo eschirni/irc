@@ -4,6 +4,8 @@ int	initialization(t_serv* serv)
 {
 	int	return_code;
 
+	serv->len = 1;
+	serv->n_fds = 1;
 	serv->listen_sd = socket(AF_INET, SOCK_STREAM, 0);
 	if (serv->listen_sd < 0)
 		return (error());
