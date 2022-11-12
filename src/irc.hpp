@@ -13,6 +13,10 @@
 # include <netinet/in.h>
 # include <unistd.h>
 
+//for linux
+# include <cstdio>
+# include <cstdlib>
+
 /*	config	*/
 # define TIMEOUT	3 * 60 * 1000	// 3min
 # define PORT		4181

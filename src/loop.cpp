@@ -1,10 +1,29 @@
 #include "irc.hpp"
 
+static bool	establish_new_connection(t_serv* serv)
+{
+	int		usr_fd = 0;
+	bool	status = true;
+
+	while (usr_fd != -1)
+	{
+		usr_fd = accept(serv->listen_sd, NULL, NULL);
+		if (usr_fd < 0)
+		{
+			status = is_ewouldblock(errno);
+			break;
+		}
+		serv->fds[serv->n_fds].fd = usr_fd;
+		serv->fds[serv->n_fds].events = POLLIN;
+		serv->n_fds++;
+	}
+	return status;
+}
+
 int	irc_loop(t_serv* serv)
 {
 	int	return_code;
 	int tmp_size;
-	int usr_fd = 0;
 	bool continue_connection;
 	bool compress_array = false;
 	bool status = true;
@@ -24,20 +43,7 @@ int	irc_loop(t_serv* serv)
 			else if (serv->fds[i].revents != POLLIN)
 				return (error(REVENT));
 			else if (serv->fds[i].fd == serv->listen_sd)
-			{
-				while (usr_fd != -1)
-				{
-					usr_fd = accept(serv->listen_sd, NULL, NULL);
-					if (usr_fd < 0)
-					{
-						status = is_ewouldblock(errno);
-						break;
-					}
-					serv->fds[serv->n_fds].fd = usr_fd;
-					serv->fds[serv->n_fds].events = POLLIN;
-					serv->n_fds++;
-				}
-			}
+				status = establish_new_connection(serv);
 			else
 			{
 				continue_connection = true;
