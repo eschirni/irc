@@ -18,16 +18,16 @@ int	initialization(t_serv* serv)
 	init_serv_struct(serv);
 	serv->listen_sd = socket(AF_INET, SOCK_STREAM, 0);
 	if (serv->listen_sd < 0)
-		return (error());
+		return (error(errno));
 	return_code = fcntl(serv->listen_sd, F_SETFL, O_NONBLOCK);
 	if (return_code < 0)
-		return (close(serv->listen_sd), error());
+		return (close(serv->listen_sd), error(errno));
 	return_code = bind(serv->listen_sd, (struct sockaddr *)&serv->address, sizeof(serv->address));
 	if (return_code < 0)
-		return (close(serv->listen_sd), error());
+		return (close(serv->listen_sd), error(errno));
 	return_code = listen(serv->listen_sd, 0);
 	if (return_code < 0)
-		return (close(serv->listen_sd), error());
+		return (close(serv->listen_sd), error(errno));
 	serv->fds[0].fd = serv->listen_sd; //dunno if needed
 	serv->fds[0].events = POLLIN;
 	return (EXIT_SUCCESS);

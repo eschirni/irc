@@ -13,16 +13,16 @@ int	irc_loop(t_serv* serv)
 	{
 		return_code = poll(serv->fds, serv->n_fds, serv->timeout);
 		if (return_code < 0)
-			return(error()); //for failure
+			return(error(errno)); //for failure
 		else if (return_code == 0) //for timout
-			return (error());
+			return (error(errno));
 		tmp_size = serv->n_fds;
 		for (int i = 0; i < tmp_size; i++)
 		{
 			if (serv->fds[i].revents == 0)
 				continue;
 			else if (serv->fds[i].revents != POLLIN)
-				return (error());
+				return (error(errno));
 			else if (serv->fds[i].fd == serv->listen_sd)
 			{
 				do
@@ -32,7 +32,7 @@ int	irc_loop(t_serv* serv)
 					{
 						if (errno != EWOULDBLOCK)
 						{
-							error();
+							error(errno);
 							end_serv = true;
 						}
 						break;
@@ -53,14 +53,14 @@ int	irc_loop(t_serv* serv)
 					{
 						if (errno != EWOULDBLOCK) //recv failure
 						{
-							error();
+							error(errno);
 							close_conn = true;
 						}
 						break;
 					}
 					else if (return_code == 0) //connection closed by client
 					{
-						error();
+						error(errno);
 						close_conn = true;
 						break;
 					}
@@ -69,7 +69,7 @@ int	irc_loop(t_serv* serv)
 					return_code = send(serv->fds[i].fd, serv->buffer, serv->len, 0);
 					if (return_code < 0)
 					{
-						error();
+						error(errno);
 						close_conn = true;
 						break;
 					}
