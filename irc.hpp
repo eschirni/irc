@@ -6,28 +6,38 @@
 # include <sys/socket.h>
 # include <cerrno>	// errno
 # include <cstring>	// strerror
+# include <sys/poll.h> //poll
+# include <fcntl.h> //fcntl
 
 //for tests
 # include <netinet/in.h>
 # include <unistd.h>
 
-/*	defines	*/
+/*	config	*/
+# define TIMEOUT	3 * 60 * 1000	// 3min
+# define PORT		7777
 # define NEWLINE()	std::cout << std::endl
 
 /*	structs	*/
-typedef struct s_data
+typedef struct s_serv
 {
+	int					len;
+	int					listen_sd;
+	int					timeout;
+	int					n_fds;
+	char				buffer[80];
 	struct sockaddr_in	address;
-} t_data;
+	struct pollfd		fds[200];
+} t_serv;
 
 /*	init.cpp	*/
-int	initialization(t_data* data);
+int	initialization(t_serv* serv);
 
 /*	loop.cpp	*/
-int	irc_loop(t_data* data);
+int	irc_loop(t_serv* serv);
 
 /*	clean.cpp	*/
-int	clean_up(t_data* data);
+int clean_up(t_serv* serv);
 
 /*	utils.cpp	*/
 int		error(int errno_code);
