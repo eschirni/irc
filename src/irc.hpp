@@ -16,6 +16,8 @@
 /*	config	*/
 # define TIMEOUT	3 * 60 * 1000	// 3min
 # define PORT		7777
+
+/*	defines	*/
 # define NEWLINE()	std::cout << std::endl
 
 /*	structs	*/
