@@ -46,6 +46,10 @@ int		error(int errno_code);
 int		error(const char* error_msg);
 void	ft_exit(int exit_code);
 
+/*	error messages	*/
+# define TIMEOUT	"Poll time out expired"
+# define REVENT		"Unexpected return event result"
+
 /*	colors	*/
 # define BLK "\e[0;30m"
 # define RED "\e[0;31m"

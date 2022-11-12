@@ -15,14 +15,14 @@ int	irc_loop(t_serv* serv)
 		if (return_code < 0)
 			return(error(errno)); //for failure
 		else if (return_code == 0) //for timout
-			return (error(errno));
+			return (error(TIMEOUT));
 		tmp_size = serv->n_fds;
 		for (int i = 0; i < tmp_size; i++)
 		{
 			if (serv->fds[i].revents == 0)
 				continue;
 			else if (serv->fds[i].revents != POLLIN)
-				return (error(errno));
+				return (error(REVENT));
 			else if (serv->fds[i].fd == serv->listen_sd)
 			{
 				do
