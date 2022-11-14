@@ -8,6 +8,7 @@
 # include <cstring>	// strerror
 # include <sys/poll.h> //poll
 # include <fcntl.h> //fcntl
+# include <vector> // vector
 
 //for tests
 # include <netinet/in.h>
@@ -27,13 +28,11 @@
 /*	structs	*/
 typedef struct s_serv
 {
-	int					len;
 	int					listen_sd;
-	int					timeout;
 	int					n_fds;
 	char				buffer[80];
 	struct sockaddr_in	address;
-	struct pollfd		fds[200];
+	std::vector<pollfd>	fds;
 } t_serv;
 
 /*	init.cpp	*/
@@ -51,6 +50,7 @@ int		error(const char* error_msg);
 void	ft_exit(int exit_code);
 bool	is_ewouldblock(int errno_code);
 void	compress_array(t_serv* serv);
+int		erase_element(t_serv* serv, std::vector<pollfd>::iterator it);
 
 /*	error messages	*/
 # define POLLEXP	"Poll time out expired"
