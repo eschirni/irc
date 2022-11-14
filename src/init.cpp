@@ -6,7 +6,6 @@ static void	init_serv_struct(t_serv* serv)
 	memset(&serv->address, 0, sizeof(serv->address));
 	serv->address.sin_family = AF_INET;
 	serv->address.sin_port = htons(PORT);
-	// memset(serv->fds, 0, sizeof(serv->fds)); //sets fd array elements to 0 //replace by vector
 }
 
 int	initialization(t_serv* serv)
