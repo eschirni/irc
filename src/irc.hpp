@@ -19,7 +19,7 @@
 # include <cstdlib>
 
 /*	config	*/
-# define TIMEOUT	0 * 60 * 1000	// 3min
+# define TIMEOUT	3 * 60 * 1000	// 3min
 # define PORT		4181
 
 /*	defines	*/

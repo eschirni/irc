@@ -3,7 +3,7 @@
 static void clean_exit(int status, void* arg)
 {
 	t_serv*	serv = static_cast<t_serv*>(arg);
-	std::cout << "Status\t" << status << std::endl;
+	std::cout << "clean exit called with status:\t" << status << std::endl;
 	clean_up(serv);
 }
 
