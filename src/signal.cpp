@@ -2,7 +2,6 @@
 
 static void	signal_handler(int signum)
 {
-	g_status = false;
 	switch (signum)
 	{
 	case SIGINT:
@@ -19,6 +18,7 @@ static void	signal_handler(int signum)
 	default:
 		break;
 	}
+	ft_exit(signum);
 }
 
 void	init_signal_handling(void)

@@ -19,14 +19,11 @@
 # include <cstdlib>
 
 /*	config	*/
-# define TIMEOUT	3 * 60 * 1000	// 3min
+# define TIMEOUT	0 * 60 * 1000	// 3min
 # define PORT		4181
 
 /*	defines	*/
 # define NEWLINE()	std::cout << std::endl
-
-/*	global	*/
-extern bool	g_status;
 
 /*	structs	*/
 typedef struct s_serv

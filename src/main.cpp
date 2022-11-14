@@ -1,6 +1,11 @@
 #include "irc.hpp"
 
-bool	g_status = true;
+static void clean_exit(int status, void* arg)
+{
+	t_serv*	serv = static_cast<t_serv*>(arg);
+	std::cout << "Status\t" << status << std::endl;
+	clean_up(serv);
+}
 
 int main(int argc, char **argv)
 {
@@ -9,11 +14,11 @@ int main(int argc, char **argv)
 //	if (argc != 3)
 //		return error();
 	init_signal_handling();
+	if (on_exit(&clean_exit, &serv) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 	if (initialization(&serv) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	if (irc_loop(&serv) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
-	if (clean_up(&serv) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 
 	std::cout << "EXIT_SUCCESS" << std::endl; //debug

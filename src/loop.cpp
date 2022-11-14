@@ -1,21 +1,23 @@
 #include "irc.hpp"
 
-static void	establish_new_connection(t_serv* serv)
+static bool	establish_new_connection(t_serv* serv)
 {
 	int		usr_fd = 0;
+	bool	status = true;
 
 	while (usr_fd != -1)
 	{
 		usr_fd = accept(serv->listen_sd, NULL, NULL);
 		if (usr_fd < 0)
 		{
-			g_status = is_ewouldblock(errno);
+			status = is_ewouldblock(errno);
 			break;
 		}
 		serv->fds[serv->n_fds].fd = usr_fd;
 		serv->fds[serv->n_fds].events = POLLIN;
 		serv->n_fds++;
 	}
+	return status;
 }
 
 static void	process_existing_connection(t_serv* serv, int index)
@@ -59,8 +61,9 @@ int	irc_loop(t_serv* serv)
 {
 	int	return_code;
 	int tmp_size;
+	bool	status = true;
 
-	while (g_status == true)
+	while (status == true)
 	{
 		return_code = poll(serv->fds, serv->n_fds, serv->timeout);
 		if (return_code < 0)
@@ -75,7 +78,7 @@ int	irc_loop(t_serv* serv)
 			else if (serv->fds[i].revents != POLLIN)
 				return (error(REVENT));
 			else if (serv->fds[i].fd == serv->listen_sd)
-				establish_new_connection(serv);
+				status = establish_new_connection(serv);
 			else
 				process_existing_connection(serv, i);
 		}
