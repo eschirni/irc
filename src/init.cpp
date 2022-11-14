@@ -2,7 +2,6 @@
 
 static void	init_serv_struct(t_serv* serv)
 {
-	serv->len = 1;
 	serv->n_fds = 1;
 	serv->timeout = TIMEOUT;
 	memset(&serv->address, 0, sizeof(serv->address));

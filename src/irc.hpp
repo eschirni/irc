@@ -30,7 +30,6 @@ struct pollfd;
 
 typedef struct s_serv
 {
-	int					len;
 	int					listen_sd;
 	int					timeout;
 	int					n_fds;
