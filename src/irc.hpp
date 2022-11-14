@@ -8,6 +8,7 @@
 # include <cstring>	// strerror
 # include <sys/poll.h> //poll
 # include <fcntl.h> //fcntl
+# include <signal.h>
 
 //for tests
 # include <netinet/in.h>
@@ -23,6 +24,9 @@
 
 /*	defines	*/
 # define NEWLINE()	std::cout << std::endl
+
+/*	global	*/
+extern bool	g_status;
 
 /*	structs	*/
 typedef struct s_serv
@@ -51,6 +55,9 @@ int		error(const char* error_msg);
 void	ft_exit(int exit_code);
 bool	is_ewouldblock(int errno_code);
 void	compress_array(t_serv* serv);
+
+/*	signal.cpp	*/
+void	init_signal_handling(void);
 
 /*	error messages	*/
 # define POLLEXP	"Poll time out expired"
