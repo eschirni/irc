@@ -13,6 +13,7 @@ static bool	establish_new_connection(t_serv* serv)
 			status = is_ewouldblock(errno);
 			break;
 		}
+		serv->fds.push_back(pollfd());
 		serv->fds[serv->n_fds].fd = usr_fd;
 		serv->fds[serv->n_fds].events = POLLIN;
 		serv->n_fds++;
@@ -20,67 +21,51 @@ static bool	establish_new_connection(t_serv* serv)
 	return status;
 }
 
-static void	process_existing_connection(t_serv* serv, int index)
+static int	process_existing_connection(t_serv* serv, std::vector<pollfd>::iterator it)
 {
-	bool	continue_connection = true;
 	int		return_code = 0;
 
 	while (true)
 	{
-		return_code = recv(serv->fds[index].fd, serv->buffer, serv->len, 0);
+		return_code = recv(it->fd, serv->buffer, serv->len, 0);
 		if (return_code < 0)
 		{
-			continue_connection = is_ewouldblock(errno);
-			break;
+			if (is_ewouldblock(errno) == false)
+				return (erase_element(serv, it));
+			return EXIT_SUCCESS;
 		}
 		else if (return_code == 0) //connection closed by client
-		{
-			error(CCLOSE);
-			continue_connection = false;
-			break;
-		}
+			return (erase_element(serv, it), error(CCLOSE));
 		serv->len = return_code;
 		printf("%d bytes received \n", serv->len); //debug
-		return_code = send(serv->fds[index].fd, serv->buffer, serv->len, 0);
+		return_code = send(it->fd, serv->buffer, serv->len, 0);
 		if (return_code < 0)
-		{
-			error(errno);
-			continue_connection = false;
-			break;
-		}
-	}
-	if (continue_connection == false)
-	{
-		close(serv->fds[index].fd);
-		serv->fds[index].fd = -1;
-		compress_array(serv);
+			return (erase_element(serv, it), error(errno));
 	}
 }
 
 int	irc_loop(t_serv* serv)
 {
 	int	return_code;
-	int tmp_size;
 	bool status = true;
 
 	while (status == true)
 	{
-		return_code = poll(serv->fds, serv->n_fds, serv->timeout);
+		return_code = poll(&serv->fds[0], serv->n_fds, serv->timeout);
 		if (return_code < 0)
 			return(error(errno)); //for failure
 		else if (return_code == 0) //for timout
 			return (error(POLLEXP));
-		tmp_size = serv->n_fds;
-		for (int i = 0; i < tmp_size; i++)
+		for (std::vector<pollfd>::iterator it = serv->fds.begin(); it != serv->fds.end(); it++)
 		{
-			if (serv->fds[i].revents == 0)
+			if (it->revents == 0)
 				continue;
-			else if (serv->fds[i].revents != POLLIN)
+			else if (it->revents != POLLIN)
 				return (error(REVENT));
-			else if (serv->fds[i].fd == serv->listen_sd)
+			else if (it->fd == serv->listen_sd)
 				status = establish_new_connection(serv);
 			else
-				process_existing_connection(serv, i);
+				process_existing_connection(serv, it);
 		}
 	}
 	return (EXIT_SUCCESS);

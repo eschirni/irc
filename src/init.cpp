@@ -8,7 +8,7 @@ static void	init_serv_struct(t_serv* serv)
 	memset(&serv->address, 0, sizeof(serv->address));
 	serv->address.sin_family = AF_INET;
 	serv->address.sin_port = htons(PORT);
-	memset(serv->fds, 0, sizeof(serv->fds)); //sets fd array elements to 0
+	// memset(serv->fds, 0, sizeof(serv->fds)); //sets fd array elements to 0 //replace by vector
 }
 
 int	initialization(t_serv* serv)
@@ -28,7 +28,8 @@ int	initialization(t_serv* serv)
 	return_code = listen(serv->listen_sd, 0);
 	if (return_code < 0)
 		return (close(serv->listen_sd), error(errno));
-	serv->fds[0].fd = serv->listen_sd; //dunno if needed
+	serv->fds.push_back(pollfd());
+	serv->fds[0].fd = serv->listen_sd;
 	serv->fds[0].events = POLLIN;
 	return (EXIT_SUCCESS);
 }
