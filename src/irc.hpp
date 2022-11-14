@@ -13,6 +13,10 @@
 # include <netinet/in.h>
 # include <unistd.h>
 
+//for linux
+# include <cstdio>
+# include <cstdlib>
+
 /*	config	*/
 # define TIMEOUT	3 * 60 * 1000	// 3min
 # define PORT		4181
@@ -46,6 +50,7 @@ int		error(int errno_code);
 int		error(const char* error_msg);
 void	ft_exit(int exit_code);
 bool	is_ewouldblock(int errno_code);
+void	compress_array(t_serv* serv);
 
 /*	error messages	*/
 # define POLLEXP	"Poll time out expired"
