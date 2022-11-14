@@ -26,8 +26,6 @@
 # define NEWLINE()	std::cout << std::endl
 
 /*	structs	*/
-struct pollfd;
-
 typedef struct s_serv
 {
 	int					listen_sd;
