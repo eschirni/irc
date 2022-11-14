@@ -3,7 +3,6 @@
 static void	init_serv_struct(t_serv* serv)
 {
 	serv->n_fds = 1;
-	serv->timeout = TIMEOUT;
 	memset(&serv->address, 0, sizeof(serv->address));
 	serv->address.sin_family = AF_INET;
 	serv->address.sin_port = htons(PORT);

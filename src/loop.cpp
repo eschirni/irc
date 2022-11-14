@@ -52,7 +52,7 @@ int	irc_loop(t_serv* serv)
 
 	while (status == true)
 	{
-		return_code = poll(&serv->fds[0], serv->n_fds, serv->timeout);
+		return_code = poll(&serv->fds[0], serv->n_fds, TIMEOUT);
 		if (return_code < 0)
 			return(error(errno)); //for failure
 		else if (return_code == 0) //for timout

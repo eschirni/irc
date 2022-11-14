@@ -31,7 +31,6 @@ struct pollfd;
 typedef struct s_serv
 {
 	int					listen_sd;
-	int					timeout;
 	int					n_fds;
 	char				buffer[80];
 	struct sockaddr_in	address;
