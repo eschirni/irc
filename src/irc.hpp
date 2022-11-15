@@ -35,6 +35,23 @@ typedef struct s_serv
 	std::vector<pollfd>	fds;
 } t_serv;
 
+/*	classes	*/
+class User
+{
+	private:
+		User(void);
+
+		const int	_fd;
+		std::string	_client_msg;
+
+	public:
+		User(int fd, char* buffer);
+		~User(void);
+
+		int			getFd(void) const;
+		std::string	getClientMsg(void) const;
+};
+
 /*	init.cpp	*/
 int	initialization(t_serv* serv);
 
