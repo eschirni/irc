@@ -23,12 +23,12 @@ static bool	establish_new_connection(t_serv* serv)
 
 static int	process_existing_connection(t_serv* serv, std::vector<pollfd>::iterator it)
 {
-	int		return_code = 0;
-	int		len = 1;
+	int return_code = 0;
 
+	memset(serv->buffer, 0, BUFFER_SIZE);
 	while (true)
 	{
-		return_code = recv(it->fd, serv->buffer, len, 0);
+		return_code = recv(it->fd, serv->buffer, BUFFER_SIZE, 0);
 		if (return_code < 0)
 		{
 			if (is_ewouldblock(errno) == false)
@@ -37,9 +37,7 @@ static int	process_existing_connection(t_serv* serv, std::vector<pollfd>::iterat
 		}
 		else if (return_code == 0) //connection closed by client
 			return (erase_element(serv, it), error(CCLOSE));
-		len = return_code;
-		printf("%d bytes received \n", len); //debug
-		return_code = send(it->fd, serv->buffer, len, 0);
+		return_code = send(it->fd, serv->buffer, BUFFER_SIZE, 0);
 		if (return_code < 0)
 			return (erase_element(serv, it), error(errno));
 	}

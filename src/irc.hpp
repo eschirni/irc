@@ -19,8 +19,9 @@
 # include <cstdlib>
 
 /*	config	*/
-# define TIMEOUT	3 * 60 * 1000	// 3min
-# define PORT		4181
+# define TIMEOUT		3 * 60 * 1000	// 3min
+# define PORT			4181
+# define BUFFER_SIZE	512
 
 /*	defines	*/
 # define NEWLINE()	std::cout << std::endl
@@ -30,7 +31,7 @@ typedef struct s_serv
 {
 	int					listen_sd;
 	int					n_fds;
-	char				buffer[80];
+	char				buffer[BUFFER_SIZE];
 	struct sockaddr_in	address;
 	std::vector<pollfd>	fds;
 } t_serv;
