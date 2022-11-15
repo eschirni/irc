@@ -30,7 +30,6 @@
 typedef struct s_serv
 {
 	int					listen_sd;
-	int					n_fds;
 	char				buffer[BUFFER_SIZE];
 	struct sockaddr_in	address;
 	std::vector<pollfd>	fds;

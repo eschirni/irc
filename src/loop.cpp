@@ -14,33 +14,24 @@ static bool	establish_new_connection(t_serv* serv)
 			break;
 		}
 		serv->fds.push_back(pollfd());
-		serv->fds[serv->n_fds].fd = usr_fd;
-		serv->fds[serv->n_fds].events = POLLIN;
-		serv->n_fds++;
+		serv->fds.back().fd = usr_fd;
+		serv->fds.back().events = POLLIN;
 	}
 	return status;
 }
 
 static int	process_existing_connection(t_serv* serv, std::vector<pollfd>::iterator it)
 {
-	int return_code = 0;
+	int return_code;
 
 	memset(serv->buffer, 0, BUFFER_SIZE);
-	while (true)
-	{
-		return_code = recv(it->fd, serv->buffer, BUFFER_SIZE, 0);
-		if (return_code < 0)
-		{
-			if (is_ewouldblock(errno) == false)
-				return (erase_element(serv, it));
-			return EXIT_SUCCESS;
-		}
-		else if (return_code == 0) //connection closed by client
-			return (erase_element(serv, it), error(CCLOSE));
-		return_code = send(it->fd, serv->buffer, BUFFER_SIZE, 0);
-		if (return_code < 0)
-			return (erase_element(serv, it), error(errno));
-	}
+	return_code = recv(it->fd, serv->buffer, BUFFER_SIZE, 0);
+	if (return_code < 0 && is_ewouldblock(errno) == false)
+		return (erase_element(serv, it));
+	else if (return_code == 0) //connection closed by client
+		return (erase_element(serv, it), error(CCLOSE));
+	std::cout << serv->buffer << std::endl; //debug
+	return EXIT_SUCCESS;
 }
 
 int	irc_loop(t_serv* serv)
@@ -50,7 +41,7 @@ int	irc_loop(t_serv* serv)
 
 	while (status == true)
 	{
-		return_code = poll(&serv->fds[0], serv->n_fds, TIMEOUT);
+		return_code = poll(&serv->fds[0], serv->fds.size(), TIMEOUT);
 		if (return_code < 0)
 			return(error(errno)); //for failure
 		else if (return_code == 0) //for timout
