@@ -53,7 +53,7 @@ $(NAME): $(OBJ)
 
 clean:
 	@if [ -d "$(OBJ_PATH)" ]; then \
-			rm -f -r $(OBJ_PATH); \
+			rm -rf $(OBJ_PATH); \
 			echo "$(R)Cleaning [$(OBJ) $(OBJ_PATH)]...$(X)"; else \
 			echo "$(N)No objects to remove."; \
 	fi;
@@ -66,7 +66,3 @@ fclean: clean
 	fi;
 
 re: fclean all
-
-# ADDITIONAL RULES
-
-.PHONY: all, clean, fclean, re
