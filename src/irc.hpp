@@ -67,7 +67,7 @@ int		error(const char* error_msg);
 void	ft_exit(int exit_code);
 bool	is_ewouldblock(int errno_code);
 void	compress_array(t_serv* serv);
-int		erase_element(t_serv* serv, std::vector<pollfd>::iterator it);
+int		erase_element(t_serv* serv, size_t index);
 
 /*	error messages	*/
 # define POLLEXP	"Poll time out expired"

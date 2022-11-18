@@ -30,9 +30,12 @@ bool	is_ewouldblock(int errno_code)
 	return true;
 }
 
-int	erase_element(t_serv* serv, std::vector<pollfd>::iterator it)
+int	erase_element(t_serv* serv, size_t index)
 {
-	close(it->fd);
+	close(serv->fds[index].fd);
+	std::vector<pollfd>::iterator it = serv->fds.begin();
+	while (it - serv->fds.begin() != static_cast<long int>(index))
+		it++;
 	serv->fds.erase(it);
 	return EXIT_FAILURE;
 }

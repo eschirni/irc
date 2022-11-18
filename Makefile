@@ -1,5 +1,5 @@
 # FLAGS
-CPPFLAGS = -Wall -Wextra -std=c++98 -Wshadow -Wno-shadow #-g #-Werror
+CPPFLAGS = -Wall -Wextra #-std=c++98 -Wshadow -Wno-shadow #-g #-Werror
 CXX = @c++
 
 # COLORS
@@ -25,21 +25,6 @@ OBJ = $(patsubst $(SRC_PATH)%.c, $(OBJ_PATH)%.o, $(SRC))
 
 # RULES
 all: $(NAME)
-	# @echo "  $(R)iiii                                          "; sleep .2
-	# @echo " i::::i                                         "; sleep .3
-	# @echo "  iiii                                          \n"; sleep .3
-	# @echo "iiiiiii $(G)rrrrr   rrrrrrrrr        $(B)cccccccccccccccc"; sleep .3
-	# @echo "$(R)i:::::i $(G)r::::rrr:::::::::r     $(B)cc:::::::::::::::c"; sleep .3
-	# @echo " $(R)i::::i $(G)r:::::::::::::::::r   $(B)c:::::::::::::::::c"; sleep .3
-	# @echo " $(R)i::::i $(G)rr::::::rrrrr::::::r $(B)c:::::::cccccc:::::c"; sleep .3
-	# @echo " $(R)i::::i  $(G)r:::::r     r:::::r $(B)c::::::c     ccccccc"; sleep .3
-	# @echo " $(R)i::::i  $(G)r:::::r     rrrrrrr $(B)c:::::c             "; sleep .3
-	# @echo " $(R)i::::i  $(G)r:::::r             $(B)c:::::c             "; sleep .3
-	# @echo " $(R)i::::i  $(G)r:::::r             $(B)c::::::c     ccccccc"; sleep .3
-	# @echo "$(R)i::::::i $(G)r:::::r             $(B)c:::::::cccccc:::::c"; sleep .3
-	# @echo "$(R)i::::::i $(G)r:::::r              $(B)c:::::::::::::::::c"; sleep .3
-	# @echo "$(R)i::::::i $(G)r:::::r               $(B)cc:::::::::::::::c"; sleep .3
-	# @echo "$(R)iiiiiiii $(G)rrrrrrr                 $(B)cccccccccccccccc$(X)"
 
 $(OBJ_PATH)%.o :$(SRC_PATH)%.c
 	@echo "$(N)Compiling [$@]...$(X)"
