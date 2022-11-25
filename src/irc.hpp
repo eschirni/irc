@@ -4,11 +4,12 @@
 /*	includes	*/
 # include <iostream>
 # include <sys/socket.h>
-# include <cerrno>	// errno
-# include <cstring>	// strerror
-# include <sys/poll.h> //poll
-# include <fcntl.h> //fcntl
-# include <vector> // vector
+# include <cerrno>			//errno
+# include <cstring>			//strerror
+# include <sys/poll.h>		//poll
+# include <fcntl.h>			//fcntl
+# include <vector>			//vector
+# include <map>				//map
 
 //for tests
 # include <netinet/in.h>
@@ -22,18 +23,12 @@
 # define TIMEOUT		3 * 60 * 1000	// 3min
 # define PORT			4181
 # define BUFFER_SIZE	512
+# define SERVER_NAME	"Teapot"
+# define SERVER_ADDR	"irc_serv.42HN.de"
 
 /*	defines	*/
 # define NEWLINE()	std::cout << std::endl
-
-/*	structs	*/
-typedef struct s_serv
-{
-	int					listen_sd;
-	char				buffer[BUFFER_SIZE];
-	struct sockaddr_in	address;
-	std::vector<pollfd>	fds;
-} t_serv;
+# define NPOS		std::string::npos
 
 /*	classes	*/
 class User
@@ -43,6 +38,11 @@ class User
 
 		const int	_fd;
 		std::string	_client_msg;
+		bool		_first_msg;
+		std::string	_nick_name;
+		std::string	_user_name;
+		std::string	_real_name;
+		int			_user_mode;
 
 	public:
 		User(int fd, char* buffer);
@@ -50,7 +50,17 @@ class User
 
 		int			getFd(void) const;
 		std::string	getClientMsg(void) const;
+		int			process_msg(const char* msg);
 };
+
+/*	structs	*/
+typedef struct s_serv
+{
+	int					listen_sd;
+	char				buffer[BUFFER_SIZE];
+	struct sockaddr_in	address;
+	std::vector<pollfd>	fds;
+} t_serv;
 
 /*	init.cpp	*/
 int	initialization(t_serv* serv);
@@ -73,6 +83,7 @@ int		erase_element(t_serv* serv, size_t index);
 # define POLLEXP	"Poll time out expired"
 # define REVENT		"Unexpected return event result"
 # define CCLOSE		"Connection closed by client"
+# define INVARGC	"Invalid argument count.\nUSAGE: ./ircserv <port> <password>"
 
 /*	colors	*/
 # define BLK "\e[0;30m"
