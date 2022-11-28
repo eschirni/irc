@@ -55,7 +55,7 @@ int	User::process_msg(const char* msg)
 {
 	if (_first_msg == true && initiate_handshake(msg) == EXIT_FAILURE)
 	{
-		std::cout << "EXIT_FAILURE" << std::endl;
+		std::cout << "EXIT_FAILURE" << std::endl; //debug
 		return EXIT_FAILURE;
 	}
 	_client_msg.append(msg);
