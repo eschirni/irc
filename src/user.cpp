@@ -20,7 +20,7 @@ std::string	User::getClientMsg(void) const {return _client_msg;}
 
 int	User::process_msg(const char* msg)
 {
-	/* code */
-	// std::cout << "PROCESS_MSG_METHOD" << std::endl;
+	// if (_first_msg == true && initiate_handshake(msg) == EXIT_FAILURE)
+	// 	return EXIT_FAILURE;
 	return EXIT_SUCCESS;
 }

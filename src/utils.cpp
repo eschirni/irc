@@ -43,6 +43,6 @@ int	erase_element(t_serv* serv, size_t index)
 	while (it - serv->fds.begin() != static_cast<long int>(index))
 		it++;
 	serv->fds.erase(it);
-	serv->users.erase(it->fd);
+	// serv->users.erase(ite); // FIXME container-overflow upon disconnect
 	return EXIT_FAILURE;
 }
