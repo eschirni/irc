@@ -21,6 +21,6 @@ std::string	User::getClientMsg(void) const {return _client_msg;}
 int	User::process_msg(const char* msg)
 {
 	/* code */
-	std::cout << "PROCESS_MSG_METHOD" << std::endl;
+	// std::cout << "PROCESS_MSG_METHOD" << std::endl;
 	return EXIT_SUCCESS;
 }

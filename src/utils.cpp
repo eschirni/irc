@@ -13,6 +13,12 @@ int	error(const char* error_msg)
 	return EXIT_FAILURE;
 }
 
+int	info(const char* info_msg) //debug
+{
+	std::cout << BYEL << "Info: " << RESET << info_msg << std::endl;
+	return EXIT_SUCCESS;
+}
+
 void	ft_exit(int exit_code)
 {
 	std::cout << BMAG << "Exit " << RESET << "with code " << exit_code << std::endl;
