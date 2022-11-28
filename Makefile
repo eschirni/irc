@@ -1,5 +1,5 @@
 # FLAGS
-CPPFLAGS = -Wall -Wextra #-std=c++98 -Wshadow -Wno-shadow -g3 -fsanitize=address #-Werror
+CPPFLAGS = -Wall -Wextra -std=c++98 -Wshadow -Wno-shadow -g3 -fsanitize=address #-Werror
 CXX = @c++
 
 # COLORS
