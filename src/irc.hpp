@@ -60,6 +60,7 @@ typedef struct s_serv
 	char				buffer[BUFFER_SIZE];
 	struct sockaddr_in	address;
 	std::vector<pollfd>	fds;
+	std::map<int, User>	users;
 } t_serv;
 
 /*	init.cpp	*/
