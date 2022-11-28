@@ -21,7 +21,7 @@
 
 /*	config	*/
 # define TIMEOUT		3 * 60 * 1000	// 3min
-# define PORT			4181
+# define PORT			4181 //debug
 # define BUFFER_SIZE	512
 # define SERVER_NAME	"Teapot"
 # define SERVER_ADDR	"irc_serv.42HN.de"
