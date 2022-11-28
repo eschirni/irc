@@ -45,7 +45,7 @@ class User
 		int			_user_mode;
 
 	public:
-		User(int fd, char* buffer);
+		User(int fd);
 		~User(void);
 
 		int			getFd(void) const;
@@ -68,9 +68,6 @@ int	initialization(t_serv* serv);
 
 /*	loop.cpp	*/
 int	irc_loop(t_serv* serv);
-
-/*	clean.cpp	*/
-int clean_up(t_serv* serv);
 
 /*	utils.cpp	*/
 int		error(int errno_code);

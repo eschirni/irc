@@ -4,10 +4,7 @@
 
 User::User(void) : _fd(0) {}
 
-User::User(int fd, char* buffer) : _fd(fd)
-{
-	/* code */
-}
+User::User(int fd) : _fd(fd) {}
 
 User::~User(void) {}
 
@@ -20,3 +17,10 @@ std::string	User::getClientMsg(void) const {return _client_msg;}
 
 
 /******************************** METHODS **************************************/
+
+int	User::process_msg(const char* msg)
+{
+	/* code */
+	std::cout << "PROCESS_MSG_METHOD" << std::endl;
+	return EXIT_SUCCESS;
+}
