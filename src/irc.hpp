@@ -36,6 +36,8 @@ class User
 	private:
 		User(void);
 
+		int	initiate_handshake(const char* msg);
+
 		const int	_fd;
 		std::string	_client_msg;
 		bool		_first_msg;
