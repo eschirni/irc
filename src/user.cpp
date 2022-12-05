@@ -18,6 +18,18 @@ std::string	User::getClientMsg(void) const {return _client_msg;}
 
 /**************************** PRIVATE METHODS **********************************/
 
+int	User::send_welcome_reply(void)
+{
+	int			return_code;
+	std::string	msg;
+	
+	msg = RPL_WELCOME + RPL_YOURHOST + RPL_CREATED;
+	return_code = send(_fd, msg.c_str(), msg.length(), 0);
+	if (return_code < 0)
+		return (error(errno));
+	return EXIT_SUCCESS;
+}
+
 void	User::remove_line(int times)
 {
 	size_t					crlf_pos;
@@ -68,6 +80,8 @@ int	User::process_handshake(void)
 	// print_str_with_crlf(_real_name.c_str());							//debug
 	// NEWLINE();															//debug
 	remove_line(3);
+	if (send_welcome_reply() == EXIT_FAILURE)
+		return EXIT_FAILURE;
 	return EXIT_SUCCESS;
 }
 

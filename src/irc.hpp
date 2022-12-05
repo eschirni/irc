@@ -19,16 +19,22 @@
 # include <cstdio>
 # include <cstdlib>
 
-/*	config	*/
+/*	config / defines	*/
 # define TIMEOUT		3 * 60 * 1000	// 3min
-# define PORT			4182 //debug
+# define PORT			4181 //debug
 # define BUFFER_SIZE	512
-# define SERVER_NAME	"Teapot"
-# define SERVER_ADDR	"irc_serv.42HN.de"
+# define SERV_NAME		"Teapot"
+# define SERV_ADDR		"irc_serv.42HN.de"
+# define SERV_VERS		"4.2"
+# define SERV_DATE		"20.04.69"
+# define NEWLINE()		std::cout << std::endl
+# define NPOS			std::string::npos
+# define CRLF			"\r\n"
 
-/*	defines	*/
-# define NEWLINE()	std::cout << std::endl
-# define NPOS		std::string::npos
+/*	IRC-Numerics	*/
+# define RPL_WELCOME	":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
+# define RPL_YOURHOST	":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
+# define RPL_CREATED	":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
 
 /*	classes	*/
 class User
@@ -39,6 +45,7 @@ class User
 		int		initiate_handshake(std::string msg);
 		int		process_handshake(void);
 		void	remove_line(int time);
+		int		send_welcome_reply(void);
 
 		const int	_fd;
 		std::string	_client_msg;
