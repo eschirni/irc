@@ -111,6 +111,8 @@ int	User::initiate_handshake(std::string msg)
 	}
 	if (cmd_count == 3)
 	{
+		if (process_handshake() == EXIT_FAILURE)
+			return EXIT_FAILURE;
 		_first_msg = false;
 		return EXIT_SUCCESS;
 	}
@@ -124,8 +126,6 @@ int	User::process_msg(const char* msg)
 {
 	_client_msg.append(msg);
 	if (_first_msg == true && initiate_handshake(_client_msg) == EXIT_FAILURE)
-		return EXIT_FAILURE;
-	if (process_handshake() == EXIT_FAILURE)
 		return EXIT_FAILURE;
 	return EXIT_SUCCESS;
 }
