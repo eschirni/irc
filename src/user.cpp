@@ -16,7 +16,7 @@ int	User::getFd(void) const {return _fd;}
 std::string	User::getClientMsg(void) const {return _client_msg;}
 
 
-/******************************** METHODS **************************************/
+/**************************** PRIVATE METHODS **********************************/
 
 void	User::remove_line(int times)
 {
@@ -34,7 +34,7 @@ void	User::remove_line(int times)
 }		
 
 /* NOTE:	This requires 3x'crlf' and probably won't work with only one	*/
-/*			yet so this may result in an occasional crash					*/
+/*			yet, so this may result in an occasional undefined behaviour	*/
 int	User::process_handshake(void)
 {
 	size_t	pre_pos;
@@ -102,6 +102,9 @@ int	User::initiate_handshake(std::string msg)
 	}
 	return EXIT_FAILURE;
 }
+
+
+/***************************** PUBLIC METHODS **********************************/
 
 int	User::process_msg(const char* msg)
 {
