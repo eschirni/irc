@@ -18,6 +18,23 @@ std::string	User::getClientMsg(void) const {return _client_msg;}
 
 /******************************** METHODS **************************************/
 
+void	User::remove_line(int times)
+{
+	size_t					crlf_pos;
+	std::string::iterator	from;
+	std::string::iterator	to;
+
+	for (int i = 0; i < times; i++)
+	{
+		crlf_pos = _client_msg.find("\r\n", 0) + 2;
+		from = _client_msg.begin();
+		to = _client_msg.begin() + crlf_pos;
+		_client_msg.erase(from, to);
+	}
+}		
+
+/* NOTE:	This requires 3x'crlf' and probably won't work with only one	*/
+/*			yet so this may result in an occasional crash					*/
 int	User::process_handshake(void)
 {
 	size_t	pre_pos;
@@ -50,6 +67,7 @@ int	User::process_handshake(void)
 	// std::cout << "_real_name:\t";										//debug
 	// print_str_with_crlf(_real_name.c_str());							//debug
 	// NEWLINE();															//debug
+	remove_line(3);
 	return EXIT_SUCCESS;
 }
 

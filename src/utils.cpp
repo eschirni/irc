@@ -6,40 +6,10 @@ void	print_str_with_crlf(const char* s, bool print_nonprint)//debug
 	{
 		switch (s[i])
 		{
-		case '\a':
-			std::cout << "\\a";
-			if (print_nonprint == true)
-				std::cout << "\a";
-			break;
-		
-		case '\b':
-			std::cout << "\\b";
-			if (print_nonprint == true)
-				std::cout << "\b";
-			break;
-		
-		case '\t':
-			std::cout << "\\t";
-			if (print_nonprint == true)
-				std::cout << "\t";
-			break;
-		
 		case '\n':
 			std::cout << "\\n";
 			if (print_nonprint == true)
 				std::cout << "\n";
-			break;
-		
-		case '\v':
-			std::cout << "\\v";
-			if (print_nonprint == true)
-				std::cout << "\v";
-			break;
-		
-		case '\f':
-			std::cout << "\\f";
-			if (print_nonprint == true)
-				std::cout << "\f";
 			break;
 		
 		case '\r':

@@ -36,8 +36,9 @@ class User
 	private:
 		User(void);
 
-		int	initiate_handshake(std::string msg);
-		int	process_handshake(void);
+		int		initiate_handshake(std::string msg);
+		int		process_handshake(void);
+		void	remove_line(int time);
 
 		const int	_fd;
 		std::string	_client_msg;
