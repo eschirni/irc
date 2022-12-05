@@ -1,5 +1,69 @@
 #include "irc.hpp"
 
+void	print_str_with_crlf(const char* s, bool print_nonprint)//debug
+{
+	for (int i = 0; s[i]; ++i)
+	{
+		switch (s[i])
+		{
+		case '\a':
+			std::cout << "\\a";
+			if (print_nonprint == true)
+				std::cout << "\a";
+			break;
+		
+		case '\b':
+			std::cout << "\\b";
+			if (print_nonprint == true)
+				std::cout << "\b";
+			break;
+		
+		case '\t':
+			std::cout << "\\t";
+			if (print_nonprint == true)
+				std::cout << "\t";
+			break;
+		
+		case '\n':
+			std::cout << "\\n";
+			if (print_nonprint == true)
+				std::cout << "\n";
+			break;
+		
+		case '\v':
+			std::cout << "\\v";
+			if (print_nonprint == true)
+				std::cout << "\v";
+			break;
+		
+		case '\f':
+			std::cout << "\\f";
+			if (print_nonprint == true)
+				std::cout << "\f";
+			break;
+		
+		case '\r':
+			std::cout << "\\r";
+			if (print_nonprint == true)
+				std::cout << "\r";
+			break;
+		
+		case ' ':
+			std::cout << "_";
+		
+		default:
+			std::cout << s[i];
+			break;
+		}
+	}
+}
+
+int	info(const char* info_msg) //debug
+{
+	std::cout << BYEL << "Info: " << RESET << info_msg << std::endl;
+	return EXIT_SUCCESS;
+}
+
 int	error(const int errno_code)
 {
 	std::cerr << BRED << "Error: " << RESET;
@@ -11,12 +75,6 @@ int	error(const char* error_msg)
 {
 	std::cerr << BRED << "Error: " << RESET << error_msg << std::endl;
 	return EXIT_FAILURE;
-}
-
-int	info(const char* info_msg) //debug
-{
-	std::cout << BYEL << "Info: " << RESET << info_msg << std::endl;
-	return EXIT_SUCCESS;
 }
 
 void	ft_exit(int exit_code)

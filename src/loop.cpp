@@ -52,7 +52,7 @@ int	irc_loop(t_serv* serv)
 			return (error(POLLEXP));
 		for (size_t i = 0; i < serv->fds.size(); i++)
 		{
-			// /*
+			/*
 			if (serv->fds[i].revents != 0) //debug
 			{
 				printf("  fd=%d; revents: %s%s%s\n", serv->fds[i].fd,
@@ -60,7 +60,7 @@ int	irc_loop(t_serv* serv)
 						(serv->fds[i].revents & POLLHUP) ? "POLLHUP " : "",
 						(serv->fds[i].revents & POLLERR) ? "POLLERR " : "");
 			}
-			// */
+			*/
 			if (serv->fds[i].revents == 0)
 				continue;
 			else if (serv->fds[i].revents & POLLHUP)

@@ -21,7 +21,7 @@
 
 /*	config	*/
 # define TIMEOUT		3 * 60 * 1000	// 3min
-# define PORT			4181 //debug
+# define PORT			4182 //debug
 # define BUFFER_SIZE	512
 # define SERVER_NAME	"Teapot"
 # define SERVER_ADDR	"irc_serv.42HN.de"
@@ -36,7 +36,8 @@ class User
 	private:
 		User(void);
 
-		int	initiate_handshake(const char* msg);
+		int	initiate_handshake(std::string msg);
+		int	process_handshake(void);
 
 		const int	_fd;
 		std::string	_client_msg;
@@ -78,7 +79,8 @@ void	ft_exit(int exit_code);
 bool	is_ewouldblock(int errno_code);
 void	compress_array(t_serv* serv);
 int		erase_element(t_serv* serv, size_t index);
-int	info(const char* info_msg); //debug
+int		info(const char* info_msg); //debug
+void	print_str_with_crlf(const char* s, bool print_nonprint = false); //debug
 
 /*	error messages	*/
 # define POLLEXP	"Poll time out expired"
