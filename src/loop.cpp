@@ -16,8 +16,6 @@ static int	process_existing_connection(t_serv* serv, size_t index)
 {
 	int return_code;
 
-	if (serv->fds[index].fd == -1)
-		return (erase_element(serv, index));
 	memset(serv->buffer, 0, BUFFER_SIZE);
 	return_code = recv(serv->fds[index].fd, serv->buffer, BUFFER_SIZE, 0);
 	if (return_code < 0 && is_ewouldblock(errno) == false)
@@ -40,19 +38,25 @@ int	irc_loop(t_serv* serv)
 			return(error(errno)); //for failure
 		else if (return_code == 0) //for timout
 			return (error(POLLEXP));
-		for (size_t i = 0; i < serv->fds.size(); i++)
+		for (int i = 0; i < (int)serv->fds.size(); i++)
 		{
+			/* CHECK FOR DISCONNECT OR FAILURE*/
 			if (serv->fds[i].revents == 0)
 				continue;
 			else if (serv->fds[i].revents & POLLHUP)
-				serv->fds[i].fd = -1;
+			{
+				erase_element(serv, i);
+				continue;
+			}
 			else if (serv->fds[i].revents != POLLIN)
 				return (error(REVENT));
+
+			/* CHECK IF NEW CONNECTION */
 			if (serv->fds[i].fd == serv->listen_sd)
 				status = establish_new_connection(serv);
 			else
 				process_existing_connection(serv, i);
 		}
 	}
-	return (EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }
