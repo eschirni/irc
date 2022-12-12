@@ -4,11 +4,12 @@
 /*	includes	*/
 # include <iostream>
 # include <sys/socket.h>
-# include <cerrno>	// errno
-# include <cstring>	// strerror
-# include <sys/poll.h> //poll
-# include <fcntl.h> //fcntl
-# include <vector> // vector
+# include <cerrno>			//errno
+# include <cstring>			//strerror
+# include <sys/poll.h>		//poll
+# include <fcntl.h>			//fcntl
+# include <vector>			//vector
+# include <map>				//map
 
 //for tests
 # include <netinet/in.h>
@@ -18,13 +19,49 @@
 # include <cstdio>
 # include <cstdlib>
 
-/*	config	*/
+/*	config / defines	*/
 # define TIMEOUT		3 * 60 * 1000	// 3min
-# define PORT			4181
+# define PORT			4181 //debug
 # define BUFFER_SIZE	512
+# define SERV_NAME		"Teapot"
+# define SERV_ADDR		"irc_serv.42HN.de"
+# define SERV_VERS		"4.2"
+# define SERV_DATE		"20.04.69"
+# define NEWLINE()		std::cout << std::endl
+# define NPOS			std::string::npos
+# define CRLF			"\r\n"
 
-/*	defines	*/
-# define NEWLINE()	std::cout << std::endl
+/*	IRC-Numerics	*/
+# define RPL_WELCOME	":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
+# define RPL_YOURHOST	":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
+# define RPL_CREATED	":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
+
+/*	classes	*/
+class User
+{
+	private:
+		User(void);
+
+		int		initiate_handshake(std::string msg);
+		int		process_handshake(void);
+		void	remove_line(int time);
+		int		send_welcome_reply(void);
+
+		const int	_fd;
+		std::string	_client_msg;
+		bool		_first_msg;
+		std::string	_nick_name;
+		std::string	_user_name;
+		std::string	_real_name;
+		int			_user_mode;
+
+	public:
+		User(int fd);
+		~User(void);
+
+		std::string	getClientMsg(void) const;
+		int			process_msg(const char* msg);
+};
 
 /*	structs	*/
 typedef struct s_serv
@@ -33,24 +70,8 @@ typedef struct s_serv
 	char				buffer[BUFFER_SIZE];
 	struct sockaddr_in	address;
 	std::vector<pollfd>	fds;
+	std::map<int, User>	users;
 } t_serv;
-
-/*	classes	*/
-class User
-{
-	private:
-		User(void);
-
-		const int	_fd;
-		std::string	_client_msg;
-
-	public:
-		User(int fd, char* buffer);
-		~User(void);
-
-		int			getFd(void) const;
-		std::string	getClientMsg(void) const;
-};
 
 /*	init.cpp	*/
 int	initialization(t_serv* serv);
@@ -58,21 +79,21 @@ int	initialization(t_serv* serv);
 /*	loop.cpp	*/
 int	irc_loop(t_serv* serv);
 
-/*	clean.cpp	*/
-int clean_up(t_serv* serv);
-
 /*	utils.cpp	*/
 int		error(int errno_code);
 int		error(const char* error_msg);
 void	ft_exit(int exit_code);
 bool	is_ewouldblock(int errno_code);
 void	compress_array(t_serv* serv);
-int		erase_element(t_serv* serv, std::vector<pollfd>::iterator it);
+int		erase_element(t_serv* serv, size_t index);
+int		info(const char* info_msg); //debug
+void	print_str_with_crlf(const char* s, bool print_nonprint = false); //debug
 
 /*	error messages	*/
 # define POLLEXP	"Poll time out expired"
 # define REVENT		"Unexpected return event result"
 # define CCLOSE		"Connection closed by client"
+# define INVARGC	"Invalid argument count.\nUSAGE: ./ircserv <port> <password>"
 
 /*	colors	*/
 # define BLK "\e[0;30m"

@@ -1,6 +1,6 @@
 #include "irc.hpp"
 
-int main(int argc, char **argv)
+int main(void)
 {
 	t_serv serv;
 
@@ -9,8 +9,6 @@ int main(int argc, char **argv)
 	if (initialization(&serv) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	if (irc_loop(&serv) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
-	if (clean_up(&serv) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 
 	std::cout << "EXIT_SUCCESS" << std::endl; //debug
