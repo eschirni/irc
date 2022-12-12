@@ -79,17 +79,17 @@ enum e_commands
 				// CONNECTION REGISTRATION
 	NICK,		// Change Nickname							[ ]	[E]RFC 2812 3.1.2
 	USER,		// Set username and other options			[ ]	[E]RFC 2812 3.1.3
-	OPER,		// Gain Operator Status						[ ]	[E?]RFC 2812 3.1.4
+	OPER,		// Gain Operator Status						[ ]	[E]RFC 2812 3.1.4
 	QUIT,		// Acknowleges to client that user quit		[ ]	RFC 2812 3.1.7
 
 				// CHANNEL OPERATIONS
 	JOIN,		// Joining Channel							[ ]	[E]RFC 2812 3.2.1
-	PART,		// Leaving Channel							[ ]	[E?]RFC 2812 3.2.2
+	PART,		// Leaving Channel							[ ]	[E]RFC 2812 3.2.2
 	TOPIC,		// Set or change a channels description		[ ]	RFC 2812 3.2.4
 	NAMES,		// List users in channel					[ ]	RFC 2812 3.2.5
 	LIST,		// List channels in server					[ ]	RFC 2812 3.2.6
 	INVITE,		// Invite user to channel					[ ]	RFC 2812 3.2.7
-	KICK,		// Kick user from channel					[ ]	[E?]RFC 2812 3.2.8
+	KICK,		// Kick user from channel					[ ]	[E]RFC 2812 3.2.8
 
 				// SENDING MESSAGES
 	PRIVMSG,	// Sending private message to a user		[ ]	[E]RFC 2812 3.3.1
