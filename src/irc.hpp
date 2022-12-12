@@ -73,6 +73,39 @@ typedef struct s_serv
 	std::map<int, User>	users;
 } t_serv;
 
+/*	enumerations */
+enum e_commands
+{
+				// CONNECTION REGISTRATION
+	NICK,		// Change Nickname							[ ]	[E]RFC 2812 3.1.2
+	USER,		// Set username and other options			[ ]	[E]RFC 2812 3.1.3
+	OPER,		// Gain Operator Status						[ ]	[E?]RFC 2812 3.1.4
+	QUIT,		// Acknowleges to client that user quit		[ ]	RFC 2812 3.1.7
+
+				// CHANNEL OPERATIONS
+	JOIN,		// Joining Channel							[ ]	[E]RFC 2812 3.2.1
+	PART,		// Leaving Channel							[ ]	[E?]RFC 2812 3.2.2
+	TOPIC,		// Set or change a channels description		[ ]	RFC 2812 3.2.4
+	NAMES,		// List users in channel					[ ]	RFC 2812 3.2.5
+	LIST,		// List channels in server					[ ]	RFC 2812 3.2.6
+	INVITE,		// Invite user to channel					[ ]	RFC 2812 3.2.7
+	KICK,		// Kick user from channel					[ ]	[E?]RFC 2812 3.2.8
+
+				// SENDING MESSAGES
+	PRIVMSG,	// Sending private message to a user		[ ]	[E]RFC 2812 3.3.1
+	NOTICE,		// Kinda the same as PRIVMSG				[ ]	[E]RFC 2812 3.3.2
+	
+				// SERVER QUERIES
+	INFO,		// Information about the server (help?)		[ ]	RFC 2812 3.4.10
+
+				// MISCElLANEOUS MESSAGES
+	KILL,		// Close a client-server connection			[ ]	RFC 2812 3.7.1
+	PONG,		// Reply to PING message					[ ]	[E]RFC 2812 3.7.3
+
+				// OPTIONAL FEATURES
+	DIE,		// Shuts down the server					[ ]	RFC 2812 4.3
+};
+
 /*	init.cpp	*/
 int	initialization(t_serv* serv);
 

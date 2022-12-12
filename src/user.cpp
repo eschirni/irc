@@ -108,8 +108,23 @@ int	User::initiate_handshake(std::string msg)
 
 int	User::process_msg(const char* msg)
 {
+	int	current_command;
+
 	_client_msg.append(msg);
 	if (_first_msg == true && initiate_handshake(_client_msg) == EXIT_FAILURE)
 		return EXIT_FAILURE;
+	/*
+	current_command = get_current_command(_client_msg);
+	switch (current_command)
+	{
+	case NICK:
+		irc_nick();
+		break;
+	
+	default:
+		// send ERR_UNKOWNCOMMAND
+		break;
+	}
+	*/
 	return EXIT_SUCCESS;
 }
