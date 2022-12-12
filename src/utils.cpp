@@ -67,10 +67,8 @@ bool	is_ewouldblock(int errno_code)
 int	erase_element(t_serv* serv, size_t index)
 {
 	close(serv->fds[index].fd);
-	std::vector<pollfd>::iterator it = serv->fds.begin();
-	while (it - serv->fds.begin() != static_cast<long int>(index))
-		it++;
+	std::vector<pollfd>::iterator it = serv->fds.begin() + index;
+	serv->users.erase(it->fd);
 	serv->fds.erase(it);
-	// serv->users.erase(it->fd); // FIXME container-overflow upon disconnect
 	return EXIT_FAILURE;
 }
