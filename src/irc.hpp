@@ -59,7 +59,6 @@ class User
 		User(int fd);
 		~User(void);
 
-		int			getFd(void) const;
 		std::string	getClientMsg(void) const;
 		int			process_msg(const char* msg);
 };
