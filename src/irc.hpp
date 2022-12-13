@@ -137,6 +137,7 @@ void	print_str_with_crlf(const char* s, bool print_nonprint = false); //debug
 # define PASSNOCHAR		"Invalid password. Password has to have at least one letter."
 # define PASSNOINT		"Invalid password. Password has to have at least one digit."
 # define PASSNOFT		"Invalid password. Password does not contain the sequence '42'."
+# define PASSNOHN		"Invalid password. Password does not contain the sequence 'ThisIsTheBestIrcIHaveEverSeen'."
 
 /*	colors	*/
 # define BLK "\e[0;30m"
