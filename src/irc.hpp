@@ -17,11 +17,10 @@
 
 //for linux
 # include <cstdio>
-# include <cstdlib>
+# include <cstdlib>			//atoi
 
 /*	config / defines	*/
 # define TIMEOUT		3 * 60 * 1000	// 3min
-# define PORT			4181 //debug
 # define BUFFER_SIZE	512
 # define SERV_NAME		"Teapot"
 # define SERV_ADDR		"irc_serv.42HN.de"
@@ -30,6 +29,10 @@
 # define NEWLINE()		std::cout << std::endl
 # define NPOS			std::string::npos
 # define CRLF			"\r\n"
+# define PORT_MIN		1024
+# define PORT_MAX		65535
+# define PASSW_MIN_LEN	8
+# define PASSW_MAX_LEN	1024
 
 /*	IRC-Numerics	*/
 # define RPL_WELCOME	":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
@@ -71,6 +74,7 @@ typedef struct s_serv
 	struct sockaddr_in	address;
 	std::vector<pollfd>	fds;
 	std::map<int, User>	users;
+	std::string			password;
 } t_serv;
 
 /*	enumerations */
@@ -107,7 +111,7 @@ enum e_commands
 };
 
 /*	init.cpp	*/
-int	initialization(t_serv* serv);
+int	initialization(t_serv* serv, char** argv);
 
 /*	loop.cpp	*/
 int	irc_loop(t_serv* serv);
@@ -123,10 +127,16 @@ int		info(const char* info_msg); //debug
 void	print_str_with_crlf(const char* s, bool print_nonprint = false); //debug
 
 /*	error messages	*/
-# define POLLEXP	"Poll time out expired"
-# define REVENT		"Unexpected return event result"
-# define CCLOSE		"Connection closed by client"
-# define INVARGC	"Invalid argument count.\nUSAGE: ./ircserv <port> <password>"
+# define POLLEXP		"Poll time out expired"
+# define REVENT			"Unexpected return event result"
+# define CCLOSE			"Connection closed by client"
+# define INVARGC		"Invalid argument count.\nUSAGE: ./ircserv <port> <password>"
+# define INVPORT		"Invalid port. Port should only contain digits and be in the range of 1024 to 65535."
+# define PASSTOSMALL	"Invalid password. Password should be at least 8 characters big."
+# define PASSTOBIG		"Invalid password. Password to big."
+# define PASSNOCHAR		"Invalid password. Password has to have at least one letter."
+# define PASSNOINT		"Invalid password. Password has to have at least one digit."
+# define PASSNOFT		"Invalid password. Password does not contain the sequence '42'."
 
 /*	colors	*/
 # define BLK "\e[0;30m"
