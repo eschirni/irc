@@ -17,6 +17,7 @@ std::string	User::getClientMsg(void) const {return _client_msg;}
 /*
 	FIXME: should only send once, sends multiple error msgs sometimes
 	FIXME: also, the user does not get disconnected from the server when password is wrong
+	INFO:  to connect via weechat, type the following into weechat "/connect -password=42Heilbronn"
 */
 int	User::check_password(std::string password)
 {
