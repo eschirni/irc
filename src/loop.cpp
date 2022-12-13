@@ -22,7 +22,8 @@ static int	process_existing_connection(t_serv* serv, size_t index)
 		return (erase_element(serv, index));
 	else if (return_code == 0) //connection closed by client
 		return (erase_element(serv, index), error(CCLOSE));
-	serv->users.find(serv->fds[index].fd)->second.process_msg(serv->buffer);
+	// maybe check for password on this line and not in user class?
+	serv->users.find(serv->fds[index].fd)->second.process_msg(serv->buffer, serv->password);
 	return EXIT_SUCCESS;
 }
 

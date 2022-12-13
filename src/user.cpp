@@ -14,6 +14,34 @@ std::string	User::getClientMsg(void) const {return _client_msg;}
 
 /**************************** PRIVATE METHODS **********************************/
 
+/*
+	FIXME: should only send once, sends multiple error msgs sometimes
+	FIXME: also, the user does not get disconnected from the server when password is wrong
+*/
+int	User::check_password(std::string password)
+{
+	std::string msg;
+	std::string user_password;
+	size_t pos = _client_msg.find("PASS") + static_cast<std::string>("PASS ").length();
+	size_t crlf = _client_msg.find("\r\n");
+
+	if (pos == NPOS)
+	{
+		msg = ERR_NOPASSWORD;
+		send(_fd, msg.c_str(), msg.length(), 0);
+		return EXIT_FAILURE;
+	}
+	user_password = _client_msg.substr(pos, crlf - pos);
+	std::cout << user_password << std::endl;
+	if (password.compare(user_password) != 0)
+	{
+		msg = ERR_WRONGPASSWORD;
+		send(_fd, msg.c_str(), msg.length(), 0);
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
+}
+
 int	User::send_welcome_reply(void)
 {
 	int			return_code;
@@ -69,12 +97,14 @@ int	User::process_handshake(void)
 	return EXIT_SUCCESS;
 }
 
-int	User::initiate_handshake(std::string msg)
+int	User::initiate_handshake(std::string msg, std::string password)
 {
 	int		crlf_count = 0;
 	int		cmd_count = 0;
 	u_long	pos = 0;
 
+	if (check_password(password) == EXIT_FAILURE)
+		return EXIT_FAILURE;
 	while (pos != NPOS)
 	{
 		pos = msg.find("\r\n", pos);
@@ -106,12 +136,12 @@ int	User::initiate_handshake(std::string msg)
 
 /***************************** PUBLIC METHODS **********************************/
 
-int	User::process_msg(const char* msg)
+int	User::process_msg(const char* msg, std::string password)
 {
 	int	current_command;
 
 	_client_msg.append(msg);
-	if (_first_msg == true && initiate_handshake(_client_msg) == EXIT_FAILURE)
+	if (_first_msg == true && initiate_handshake(_client_msg, password) == EXIT_FAILURE)
 		return EXIT_FAILURE;
 	/*
 	current_command = get_current_command(_client_msg);

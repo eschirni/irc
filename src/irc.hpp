@@ -33,11 +33,14 @@
 # define PORT_MAX		65535
 # define PASSW_MIN_LEN	8
 # define PASSW_MAX_LEN	1024
+# define TROLL			"Heilbronn"
 
 /*	IRC-Numerics	*/
-# define RPL_WELCOME	":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
-# define RPL_YOURHOST	":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
-# define RPL_CREATED	":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
+# define RPL_WELCOME		":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
+# define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
+# define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
+# define ERR_NOPASSWORD		":irc_serv.42HN.de 464 Password required.\r\n"
+# define ERR_WRONGPASSWORD	":irc_serv.42HN.de 464 Password incorrect.\r\n"
 
 /*	classes	*/
 class User
@@ -45,10 +48,11 @@ class User
 	private:
 		User(void);
 
-		int		initiate_handshake(std::string msg);
+		int		initiate_handshake(std::string msg, std::string password);
 		int		process_handshake(void);
 		void	remove_line(int time);
 		int		send_welcome_reply(void);
+		int		check_password(std::string password);
 
 		const int	_fd;
 		std::string	_client_msg;
@@ -63,7 +67,7 @@ class User
 		~User(void);
 
 		std::string	getClientMsg(void) const;
-		int			process_msg(const char* msg);
+		int			process_msg(const char* msg, std::string password);
 };
 
 /*	structs	*/
