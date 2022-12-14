@@ -170,7 +170,7 @@ int	User::process_msg(const char* msg)
 	switch (current_command)
 	{
 		case INFO:
-			std::cout << "INFO_HERE" << std::endl;
+			info();
 			break;
 	
 		default:

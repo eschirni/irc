@@ -52,6 +52,7 @@ class User
 		void	remove_line(int time = 1);
 		int		send_welcome_reply(void);
 		int		get_current_command(void);
+		int		info(void);
 
 		const int	_fd;
 		std::string	_client_msg;
