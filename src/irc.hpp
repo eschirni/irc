@@ -39,6 +39,7 @@
 # define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
 # define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
 # define ERR_PASSWDMISMATCH	":irc_serv.42HN.de 464 Password incorrect.\r\n"
+# define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 Unknown command.\r\n"
 
 /*	classes	*/
 class User
@@ -50,6 +51,7 @@ class User
 		int		process_handshake(void);
 		void	remove_line(int time = 1);
 		int		send_welcome_reply(void);
+		int		get_current_command(void);
 
 		const int	_fd;
 		std::string	_client_msg;

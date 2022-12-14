@@ -22,6 +22,46 @@ int	User::getFd(void) const {return _fd;}
 
 /**************************** PRIVATE METHODS **********************************/
 
+int	User::get_current_command(void)
+{
+	if (_client_msg.compare(0, 4, "NICK") == 0)
+		return NICK;
+	else if (_client_msg.compare(0, 4, "USER") == 0)
+		return USER;
+	else if (_client_msg.compare(0, 4, "OPER") == 0)
+		return OPER;
+	else if (_client_msg.compare(0, 4, "QUIT") == 0)
+		return QUIT;
+	else if (_client_msg.compare(0, 4, "JOIN") == 0)
+		return JOIN;
+	else if (_client_msg.compare(0, 4, "PART") == 0)
+		return PART;
+	else if (_client_msg.compare(0, 5, "TOPIC") == 0)
+		return TOPIC;
+	else if (_client_msg.compare(0, 5, "NAMES") == 0)
+		return NAMES;
+	else if (_client_msg.compare(0, 4, "LIST") == 0)
+		return LIST;
+	else if (_client_msg.compare(0, 6, "INVITE") == 0)
+		return INVITE;
+	else if (_client_msg.compare(0, 4, "KICK") == 0)
+		return KICK;
+	else if (_client_msg.compare(0, 7, "PRIVMSG") == 0)
+		return PRIVMSG;
+	else if (_client_msg.compare(0, 6, "NOTICE") == 0)
+		return NOTICE;
+	else if (_client_msg.compare(0, 4, "INFO") == 0)
+		return INFO;
+	else if (_client_msg.compare(0, 4, "KILL") == 0)
+		return KILL;
+	else if (_client_msg.compare(0, 4, "PONG") == 0)
+		return PONG;
+	else if (_client_msg.compare(0, 3, "DIE") == 0)
+		return DIE;
+	else
+		return -1;
+}
+
 int	User::send_welcome_reply(void)
 {
 	int			return_code;
@@ -116,23 +156,29 @@ int	User::initiate_handshake(std::string msg)
 
 int	User::process_msg(const char* msg)
 {
-	int	current_command;
+	int			current_command;
+	int			return_code;
+	std::string send_msg;
 
 	_client_msg.append(msg);
 	if (_first_msg == true && initiate_handshake(_client_msg) == EXIT_FAILURE)
 		return EXIT_FAILURE;
-	/*
-	current_command = get_current_command(_client_msg);
+	if (_client_msg.empty())
+		return EXIT_SUCCESS;
+	std::cout << "_client_msg:" << std::endl << _client_msg << std::endl; //debug
+	current_command = get_current_command();
 	switch (current_command)
 	{
-	case NICK:
-		irc_nick();
-		break;
+		case INFO:
+			std::cout << "INFO_HERE" << std::endl;
+			break;
 	
-	default:
-		// send ERR_UNKOWNCOMMAND
-		break;
+		default:
+			send_msg = ERR_UNKNOWNCOMMAND;
+			return_code = send(_fd, send_msg.c_str(), send_msg.length(), 0);
+			if (return_code < 0)
+				return EXIT_FAILURE;
+			break;
 	}
-	*/
 	return EXIT_SUCCESS;
 }
