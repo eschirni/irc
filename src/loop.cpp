@@ -1,5 +1,34 @@
 #include "irc.hpp"
 
+static int	check_approval(t_serv* serv, User& user)
+{
+	if (user.getApproved() == true)
+		return EXIT_SUCCESS;
+	else if (user.getFirstMsg() == false)
+		return EXIT_FAILURE;
+
+	std::string msg;
+	std::string buffer = static_cast<std::string>(serv->buffer);
+	size_t pos = buffer.find("PASS") + static_cast<std::string>("PASS ").length();
+	size_t crlf = buffer.find("\r\n");
+	std::string user_password = buffer.substr(pos, crlf - pos);
+	if (serv->password.compare(user_password) != 0)
+	{
+		msg = ERR_PASSWDMISMATCH;
+		send(user.getFd(), msg.c_str(), msg.length(), 0);
+		return EXIT_FAILURE;
+	}
+
+	crlf = buffer.find("\r\n") + static_cast<std::string>("\r\n").length();
+	std::string::iterator from = buffer.begin();
+	std::string::iterator to = buffer.begin() + crlf;
+	buffer.erase(from, to);
+	buffer.resize(BUFFER_SIZE);
+	strncpy(serv->buffer, buffer.c_str(), BUFFER_SIZE);
+	user.setApproved(true);
+	return EXIT_SUCCESS;
+}
+
 static bool	establish_new_connection(t_serv* serv)
 {
 	int usr_fd = accept(serv->listen_sd, NULL, NULL);
@@ -22,8 +51,9 @@ static int	process_existing_connection(t_serv* serv, size_t index)
 		return (erase_element(serv, index));
 	else if (return_code == 0) //connection closed by client
 		return (erase_element(serv, index), error(CCLOSE));
-	// maybe check for password on this line and not in user class?
-	serv->users.find(serv->fds[index].fd)->second.process_msg(serv->buffer, serv->password);
+	if (check_approval(serv, serv->users.find(serv->fds[index].fd)->second) == EXIT_FAILURE)
+		return EXIT_FAILURE;
+	serv->users.find(serv->fds[index].fd)->second.process_msg(serv->buffer);
 	return EXIT_SUCCESS;
 }
 

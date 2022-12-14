@@ -5,7 +5,7 @@
 # include <iostream>
 # include <sys/socket.h>
 # include <cerrno>			//errno
-# include <cstring>			//strerror
+# include <cstring>			//strerror, strncpy
 # include <sys/poll.h>		//poll
 # include <fcntl.h>			//fcntl
 # include <vector>			//vector
@@ -33,14 +33,12 @@
 # define PORT_MAX		65535
 # define PASSW_MIN_LEN	8
 # define PASSW_MAX_LEN	1024
-# define TROLL			"Heilbronn"
 
 /*	IRC-Numerics	*/
 # define RPL_WELCOME		":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
 # define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
 # define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
-# define ERR_NOPASSWORD		":irc_serv.42HN.de 464 Password required.\r\n"
-# define ERR_WRONGPASSWORD	":irc_serv.42HN.de 464 Password incorrect.\r\n"
+# define ERR_PASSWDMISMATCH	":irc_serv.42HN.de 464 Password incorrect.\r\n"
 
 /*	classes	*/
 class User
@@ -48,11 +46,10 @@ class User
 	private:
 		User(void);
 
-		int		initiate_handshake(std::string msg, std::string password);
+		int		initiate_handshake(std::string msg);
 		int		process_handshake(void);
-		void	remove_line(int time);
+		void	remove_line(int time = 1);
 		int		send_welcome_reply(void);
-		int		check_password(std::string password);
 
 		const int	_fd;
 		std::string	_client_msg;
@@ -61,13 +58,18 @@ class User
 		std::string	_user_name;
 		std::string	_real_name;
 		int			_user_mode;
+		bool		_approved;
 
 	public:
 		User(int fd);
 		~User(void);
 
 		std::string	getClientMsg(void) const;
-		int			process_msg(const char* msg, std::string password);
+		bool		getApproved(void) const;
+		void		setApproved(bool approval);
+		int			process_msg(const char* msg);
+		bool		getFirstMsg(void) const;
+		int			getFd(void) const;
 };
 
 /*	structs	*/
@@ -141,7 +143,7 @@ void	print_str_with_crlf(const char* s, bool print_nonprint = false); //debug
 # define PASSNOCHAR		"Invalid password. Password has to have at least one letter."
 # define PASSNOINT		"Invalid password. Password has to have at least one digit."
 # define PASSNOFT		"Invalid password. Password does not contain the sequence '42'."
-# define PASSNOHN		"Invalid password. Password does not contain the sequence 'ThisIsTheBestIrcIHaveEverSeen'."
+# define PASSNOHN		"Invalid password. Password does not contain the sequence 'Heilbronn'."
 
 /*	colors	*/
 # define BLK "\e[0;30m"

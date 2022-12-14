@@ -21,7 +21,7 @@ static int	input_check(char** argv)
 		return (error(PASSNOINT));
 	if (password.find("42") == NPOS)
 		return (error(PASSNOFT));
-	if (password.find(TROLL) == NPOS)
+	if (password.find("Heilbronn") == NPOS)
 		return (error(PASSNOHN));
 	return EXIT_SUCCESS;
 }
