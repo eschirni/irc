@@ -53,7 +53,7 @@ static int	process_existing_connection(t_serv* serv, size_t index)
 		return (erase_element(serv, index), error(CCLOSE));
 	if (check_approval(serv, serv->users.find(serv->fds[index].fd)->second) == EXIT_FAILURE)
 		return EXIT_FAILURE;
-	serv->users.find(serv->fds[index].fd)->second.process_msg(serv->buffer);
+	serv->users.find(serv->fds[index].fd)->second.process_msg(serv);
 	return EXIT_SUCCESS;
 }
 

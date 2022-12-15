@@ -40,6 +40,19 @@
 # define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
 # define ERR_PASSWDMISMATCH	":irc_serv.42HN.de 464 Password incorrect.\r\n"
 # define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 Unknown command.\r\n"
+# define ERR_NICKNAMEINUSE	":irc_serv.42HN.de 433 Nickname taken.\r\n"
+
+/*	structs	*/
+class User;
+typedef struct s_serv
+{
+	int					listen_sd;
+	char				buffer[BUFFER_SIZE];
+	struct sockaddr_in	address;
+	std::vector<pollfd>	fds;
+	std::map<int, User>	users;
+	std::string			password;
+} t_serv;
 
 /*	classes	*/
 class User
@@ -47,11 +60,12 @@ class User
 	private:
 		User(void);
 
-		int		initiate_handshake(std::string msg);
-		int		process_handshake(void);
+		int		initiate_handshake(t_serv* serv, std::string msg);
+		int		process_handshake(t_serv* serv);
 		void	remove_line(int time = 1);
 		int		send_welcome_reply(void);
 		int		get_current_command(void);
+		int		check_nickname(t_serv* serv);
 		int		info(void);
 
 		const int	_fd;
@@ -70,21 +84,11 @@ class User
 		std::string	getClientMsg(void) const;
 		bool		getApproved(void) const;
 		void		setApproved(bool approval);
-		int			process_msg(const char* msg);
+		int			process_msg(t_serv* serv);
 		bool		getFirstMsg(void) const;
 		int			getFd(void) const;
+		std::string	getNickName(void) const;
 };
-
-/*	structs	*/
-typedef struct s_serv
-{
-	int					listen_sd;
-	char				buffer[BUFFER_SIZE];
-	struct sockaddr_in	address;
-	std::vector<pollfd>	fds;
-	std::map<int, User>	users;
-	std::string			password;
-} t_serv;
 
 /*	enumerations */
 enum e_commands

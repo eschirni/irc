@@ -19,8 +19,32 @@ bool	User::getFirstMsg(void) const {return _first_msg;}
 
 int	User::getFd(void) const {return _fd;}
 
+std::string	User::getNickName(void) const {return _nick_name;}
+
 
 /**************************** PRIVATE METHODS **********************************/
+
+int	User::check_nickname(t_serv* serv)
+{
+	std::string msg;
+	std::map<int, User>::iterator it = serv->users.begin();
+	std::map<int, User>::iterator end = serv->users.end();
+
+	while (it != end)
+	{
+		if (it->second.getNickName().compare(this->_nick_name) == 0)
+		{
+			if (it->second.getFd() != this->_fd)
+			{
+				msg += ERR_NICKNAMEINUSE;
+				send(_fd, msg.c_str(), msg.length(), 0);
+				return EXIT_FAILURE;
+			}
+		}
+		++it;
+	}
+	return EXIT_SUCCESS;
+}
 
 int	User::get_current_command(void)
 {
@@ -89,7 +113,7 @@ void	User::remove_line(int times)
 	}
 }		
 
-int	User::process_handshake(void)
+int	User::process_handshake(t_serv* serv)
 {
 	size_t	pre_pos;
 	size_t	suf_pos;
@@ -112,12 +136,14 @@ int	User::process_handshake(void)
 	suf_pos = _client_msg.find("\r\n", pre_pos);
 	_real_name = _client_msg.substr(pre_pos, suf_pos - pre_pos);
 	remove_line(3);
+	if (check_nickname(serv) == EXIT_FAILURE)
+		return EXIT_FAILURE;
 	if (send_welcome_reply() == EXIT_FAILURE)
 		return EXIT_FAILURE;
 	return EXIT_SUCCESS;
 }
 
-int	User::initiate_handshake(std::string msg)
+int	User::initiate_handshake(t_serv* serv, std::string msg)
 {
 	int		crlf_count = 0;
 	int		cmd_count = 0;
@@ -143,7 +169,7 @@ int	User::initiate_handshake(std::string msg)
 	}
 	if (cmd_count == 3)
 	{
-		if (process_handshake() == EXIT_FAILURE)
+		if (process_handshake(serv) == EXIT_FAILURE)
 			return EXIT_FAILURE;
 		_first_msg = false;
 		return EXIT_SUCCESS;
@@ -154,14 +180,14 @@ int	User::initiate_handshake(std::string msg)
 
 /***************************** PUBLIC METHODS **********************************/
 
-int	User::process_msg(const char* msg)
+int	User::process_msg(t_serv* serv)
 {
 	int			current_command;
 	int			return_code;
 	std::string send_msg;
 
-	_client_msg.append(msg);
-	if (_first_msg == true && initiate_handshake(_client_msg) == EXIT_FAILURE)
+	_client_msg.append(serv->buffer);
+	if (_first_msg == true && initiate_handshake(serv, _client_msg) == EXIT_FAILURE)
 		return EXIT_FAILURE;
 	if (_client_msg.empty())
 		return EXIT_SUCCESS;
