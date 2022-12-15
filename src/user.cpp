@@ -198,6 +198,12 @@ int	User::process_msg(t_serv* serv)
 		case INFO:
 			info();
 			break;
+
+		/* FILE TRANSFER */
+		// trying to send the file 'file.txt' to user 'someone' via the following command in weechat:
+		// /dcc send someone file.txt
+		// results in the client sending our server the following:
+		// "PRIVMSG someone :DCC SEND file.txt 2886860548 37009 0"
 	
 		default:
 			send_msg = ERR_UNKNOWNCOMMAND;
