@@ -38,6 +38,8 @@
 # define RPL_WELCOME		":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
 # define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
 # define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
+# define RPL_BADCHANPASS	":irc_serv.42HN.de 339 Wrong Password.\r\n"
+# define RPL_YOUREOPER		":irc_serv.42HN.de 381 You are oper.\r\n"
 # define ERR_PASSWDMISMATCH	":irc_serv.42HN.de 464 Password incorrect.\r\n"
 # define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 Unknown command.\r\n"
 # define ERR_NICKNAMEINUSE	":irc_serv.42HN.de 433 Nickname taken.\r\n"
@@ -67,6 +69,9 @@ class User
 		int		get_current_command(void);
 		int		check_nickname(t_serv* serv);
 		int		info(void);
+		std::map<int, User>::iterator	get_user(std::string nick);
+		/* cmds */
+		void 		oper(std::string nick, std::string pwd);
 
 		const int	_fd;
 		std::string	_client_msg;
@@ -76,6 +81,8 @@ class User
 		std::string	_real_name;
 		int			_user_mode;
 		bool		_approved;
+		std::map<int, User>	*_users;
+		bool		is_oper; //idk if server op is okay
 
 	public:
 		User(int fd);

@@ -32,18 +32,25 @@ int	User::check_nickname(t_serv* serv)
 
 	while (it != end)
 	{
-		if (it->second.getNickName().compare(this->_nick_name) == 0)
+		if (it->second.getNickName().compare(this->_nick_name) == 0 && it->second.getFd() != this->_fd)
 		{
-			if (it->second.getFd() != this->_fd)
-			{
-				msg += ERR_NICKNAMEINUSE;
-				send(_fd, msg.c_str(), msg.length(), 0);
-				return EXIT_FAILURE;
-			}
+			msg += ERR_NICKNAMEINUSE;
+			send(_fd, msg.c_str(), msg.length(), 0);
+			return EXIT_FAILURE;
 		}
 		++it;
 	}
 	return EXIT_SUCCESS;
+}
+
+std::map<int, User>::iterator	User::get_user(std::string nick)
+{
+	std::string msg;
+	std::map<int, User>::iterator it = this->_users->begin();
+
+	while (it != this->_users->end() && it->second.getNickName() != nick)
+		++it;
+	return it;
 }
 
 int	User::get_current_command(void)
@@ -84,6 +91,21 @@ int	User::get_current_command(void)
 		return DIE;
 	else
 		return -1;
+}
+
+void User::oper(std::string nick, std::string pwd)
+{
+	std::string msg = RPL_BADCHANPASS;
+
+	if (pwd != "teapot")
+		send(this->_fd, msg.c_str(), msg.length(), 0);
+	else
+	{
+		std::map<int, User>::iterator it = this->get_user(nick);
+		it->second.is_oper = true;
+		msg = RPL_YOUREOPER;
+		send(it->second._fd, msg.c_str(), msg.length(), 0);
+	}
 }
 
 int	User::send_welcome_reply(void)
