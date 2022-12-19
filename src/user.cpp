@@ -9,32 +9,31 @@ User::~User(void) {}
 
 /**************************** GETTER / SETTER **********************************/
 
-std::string	User::getClientMsg(void) const {return _client_msg;}
+std::string	User::getClientMsg(void) const {return this->_client_msg;}
 
-bool	User::getApproved(void) const {return _approved;}
+bool	User::getApproved(void) const {return this->_approved;}
 
-void	User::setApproved(bool approval) {_approved = approval;}
+void	User::setApproved(bool approval) {this->_approved = approval;}
 
-bool	User::getFirstMsg(void) const {return _first_msg;}
+bool	User::getFirstMsg(void) const {return this->_first_msg;}
 
-int	User::getFd(void) const {return _fd;}
+int	User::getFd(void) const {return this->_fd;}
 
-std::string	User::getNickName(void) const {return _nick_name;}
+std::string	User::getNickName(void) const {return this->_nick_name;}
 
 
 /**************************** PRIVATE METHODS **********************************/
 
-bool	User::check_nickname(void)
+bool	User::check_nickname(std::string nick)
 {
 	std::string msg;
 	std::map<int, User>::iterator it = this->_serv->users.begin();
-	std::map<int, User>::iterator end = this->_serv->users.end();
 
-	while (it != end)
+	while (it != this->_serv->users.end())
 	{
-		if (it->second.getNickName().compare(this->_nick_name) == 0 && it->second.getFd() != this->_fd)
+		if (it->second.getNickName() == nick && it->second.getFd() != this->_fd)
 		{
-			msg += ERR_NICKNAMEINUSE;
+			msg = ERR_NICKNAMEINUSE + nick + " taken.\r\n";
 			send(_fd, msg.c_str(), msg.length(), 0);
 			return false;
 		}
@@ -97,7 +96,7 @@ void User::oper(std::string nick, std::string pwd)
 {
 	std::string msg = RPL_BADCHANPASS;
 
-	if (pwd != "teapot\r\n")
+	if (pwd != "teapot")
 		send(this->_fd, msg.c_str(), msg.length(), 0);
 	else
 	{
@@ -114,9 +113,9 @@ void User::oper(std::string nick, std::string pwd)
 	}
 }
 
-void User::nick(std::string nick) //need to reply smth
+void User::nick(std::string nick) //needs to change the weechat name smh
 {
-	if (this->check_nickname() == false)
+	if (this->check_nickname(nick) == false)
 		return ;
 	this->_nick_name = nick;
 }
@@ -179,7 +178,7 @@ int	User::process_handshake(void)
 	suf_pos = _client_msg.find("\r\n", pre_pos);
 	_real_name = _client_msg.substr(pre_pos, suf_pos - pre_pos);
 	remove_line(3);
-	if (check_nickname() == false)
+	if (check_nickname(this->_nick_name) == false)
 		return EXIT_FAILURE;
 	if (send_welcome_reply() == EXIT_FAILURE)
 		return EXIT_FAILURE;
@@ -240,6 +239,10 @@ int	User::process_msg(void)
 	int pos2 = arg.find(' ');
 	std::string arg2 = arg.substr(pos2 + 1, std::string::npos);
 	arg = this->_client_msg.substr(pos + 1, pos2);
+	pos = arg.find('\r');
+	arg = arg.substr(0, pos);
+	pos = arg2.find('\r');
+	arg2 = arg2.substr(0, pos);
 	switch (current_command)
 	{
 		case INFO:

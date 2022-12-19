@@ -43,7 +43,7 @@
 # define ERR_NOSUCHNICK		":irc_serv.42HN.de 401 "
 # define ERR_PASSWDMISMATCH	":irc_serv.42HN.de 464 Password incorrect.\r\n"
 # define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 Unknown command.\r\n"
-# define ERR_NICKNAMEINUSE	":irc_serv.42HN.de 433 Nickname taken.\r\n"
+# define ERR_NICKNAMEINUSE	":irc_serv.42HN.de 433 "
 
 /*	structs	*/
 class User;
@@ -66,7 +66,7 @@ class User
 		void	remove_line(int time = 1);
 		int		send_welcome_reply(void);
 		int		get_current_command(void);
-		bool	check_nickname(void);
+		bool	check_nickname(std::string nick);
 		int		info(void);
 		std::map<int, User>::iterator	get_user(std::string nick);
 		/* cmds */
