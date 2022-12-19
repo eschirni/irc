@@ -107,9 +107,20 @@ void User::oper(std::string nick, std::string pwd)
 			send(this->_fd, msg.c_str(), msg.length(), 0);
 			return ;
 		}
-		it->second.is_oper = true;
+		it->second._is_oper = true;
 		msg = RPL_YOUREOPER;
 		send(it->second._fd, msg.c_str(), msg.length(), 0);
+	}
+}
+
+void User::send_all(std::string msg)
+{
+	std::map<int, User>::iterator it = this->_serv->users.begin();
+
+	while (it != this->_serv->users.end())
+	{
+		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
+		++it;
 	}
 }
 
@@ -117,6 +128,7 @@ void User::nick(std::string nick) //needs to change the weechat name smh
 {
 	if (this->check_nickname(nick) == false)
 		return ;
+	this->send_all(":" + this->_nick_name + "!" + this->_user_name + "@" + SERV_ADDR + " NICK " + nick + "\r\n");
 	this->_nick_name = nick;
 }
 

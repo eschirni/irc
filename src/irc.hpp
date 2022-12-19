@@ -69,6 +69,7 @@ class User
 		bool	check_nickname(std::string nick);
 		int		info(void);
 		std::map<int, User>::iterator	get_user(std::string nick);
+		void	send_all(std::string msg);
 		/* cmds */
 		void 		oper(std::string nick, std::string pwd);
 		void		nick(const std::string nick);
@@ -78,7 +79,7 @@ class User
 		t_serv		*_serv;
 		bool		_first_msg;
 		bool		_approved;
-		bool		is_oper; //idk if server op is okay
+		bool		_is_oper; //idk if server op is okay
 		std::string	_client_msg;
 		std::string	_nick_name;
 		std::string	_user_name;
