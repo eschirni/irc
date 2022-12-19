@@ -5,7 +5,7 @@
 # include <iostream>
 # include <sys/socket.h>
 # include <cerrno>			//errno
-# include <cstring>			//strerror
+# include <cstring>			//strerror, strncpy
 # include <sys/poll.h>		//poll
 # include <fcntl.h>			//fcntl
 # include <vector>			//vector
@@ -17,11 +17,10 @@
 
 //for linux
 # include <cstdio>
-# include <cstdlib>
+# include <cstdlib>			//atoi
 
 /*	config / defines	*/
 # define TIMEOUT		3 * 60 * 1000	// 3min
-# define PORT			4181 //debug
 # define BUFFER_SIZE	512
 # define SERV_NAME		"Teapot"
 # define SERV_ADDR		"irc_serv.42HN.de"
@@ -30,40 +29,24 @@
 # define NEWLINE()		std::cout << std::endl
 # define NPOS			std::string::npos
 # define CRLF			"\r\n"
+# define PORT_MIN		1024
+# define PORT_MAX		65535
+# define PASSW_MIN_LEN	8
+# define PASSW_MAX_LEN	1024
 
 /*	IRC-Numerics	*/
-# define RPL_WELCOME	":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
-# define RPL_YOURHOST	":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
-# define RPL_CREATED	":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
-
-/*	classes	*/
-class User
-{
-	private:
-		User(void);
-
-		int		initiate_handshake(std::string msg);
-		int		process_handshake(void);
-		void	remove_line(int time);
-		int		send_welcome_reply(void);
-
-		const int	_fd;
-		std::string	_client_msg;
-		bool		_first_msg;
-		std::string	_nick_name;
-		std::string	_user_name;
-		std::string	_real_name;
-		int			_user_mode;
-
-	public:
-		User(int fd);
-		~User(void);
-
-		std::string	getClientMsg(void) const;
-		int			process_msg(const char* msg);
-};
+# define RPL_WELCOME		":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
+# define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
+# define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
+# define RPL_BADCHANPASS	":irc_serv.42HN.de 339 Wrong Password.\r\n"
+# define RPL_YOUREOPER		":irc_serv.42HN.de 381 You are oper.\r\n"
+# define ERR_NOSUCHNICK		":irc_serv.42HN.de 401 "
+# define ERR_PASSWDMISMATCH	":irc_serv.42HN.de 464 Password incorrect.\r\n"
+# define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 Unknown command.\r\n"
+# define ERR_NICKNAMEINUSE	":irc_serv.42HN.de 433 "
 
 /*	structs	*/
+class User;
 typedef struct s_serv
 {
 	int					listen_sd;
@@ -71,7 +54,50 @@ typedef struct s_serv
 	struct sockaddr_in	address;
 	std::vector<pollfd>	fds;
 	std::map<int, User>	users;
+	std::string			password;
 } t_serv;
+
+/*	classes	*/
+class User
+{
+	private:
+		int		initiate_handshake(std::string msg);
+		int		process_handshake(void);
+		void	remove_line(int time = 1);
+		int		send_welcome_reply(void);
+		int		get_current_command(void);
+		bool	check_nickname(std::string nick);
+		int		info(void);
+		std::map<int, User>::iterator	get_user(std::string nick);
+		void	send_all(std::string msg);
+		/* cmds */
+		void 		oper(std::string nick, std::string pwd);
+		void		nick(const std::string nick);
+		void		ping(std::string msg);
+
+		const int	_fd;
+		t_serv		*_serv;
+		bool		_first_msg;
+		bool		_approved;
+		bool		_is_oper; //idk if server op is okay
+		std::string	_client_msg;
+		std::string	_nick_name;
+		std::string	_user_name;
+		std::string	_real_name;
+		int			_user_mode;
+
+	public:
+		User(int fd, t_serv *serv);
+		~User(void);
+
+		std::string	getClientMsg(void) const;
+		bool		getApproved(void) const;
+		void		setApproved(bool approval);
+		int			process_msg(void);
+		bool		getFirstMsg(void) const;
+		int			getFd(void) const;
+		std::string	getNickName(void) const;
+};
 
 /*	enumerations */
 enum e_commands
@@ -100,14 +126,14 @@ enum e_commands
 
 				// MISCElLANEOUS MESSAGES
 	KILL,		// Close a client-server connection			[ ]	RFC 2812 3.7.1
-	PONG,		// Reply to PING message					[ ]	[E]RFC 2812 3.7.3
+	PING,		// Reply to PING message					[ ]	[E]RFC 2812 3.7.3
 
 				// OPTIONAL FEATURES
 	DIE,		// Shuts down the server					[ ]	RFC 2812 4.3
 };
 
 /*	init.cpp	*/
-int	initialization(t_serv* serv);
+int	initialization(t_serv* serv, char** argv);
 
 /*	loop.cpp	*/
 int	irc_loop(t_serv* serv);
@@ -123,10 +149,17 @@ int		info(const char* info_msg); //debug
 void	print_str_with_crlf(const char* s, bool print_nonprint = false); //debug
 
 /*	error messages	*/
-# define POLLEXP	"Poll time out expired"
-# define REVENT		"Unexpected return event result"
-# define CCLOSE		"Connection closed by client"
-# define INVARGC	"Invalid argument count.\nUSAGE: ./ircserv <port> <password>"
+# define POLLEXP		"Poll time out expired"
+# define REVENT			"Unexpected return event result"
+# define CCLOSE			"Connection closed by client"
+# define INVARGC		"Invalid argument count.\nUSAGE: ./ircserv <port> <password>"
+# define INVPORT		"Invalid port. Port should only contain digits and be in the range of 1024 to 65535."
+# define PASSTOSMALL	"Invalid password. Password should be at least 8 characters big."
+# define PASSTOBIG		"Invalid password. Password to big."
+# define PASSNOCHAR		"Invalid password. Password has to have at least one letter."
+# define PASSNOINT		"Invalid password. Password has to have at least one digit."
+# define PASSNOFT		"Invalid password. Password does not contain the sequence '42'."
+# define PASSNOHN		"Invalid password. Password does not contain the sequence 'Heilbronn'."
 
 /*	colors	*/
 # define BLK "\e[0;30m"
