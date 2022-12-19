@@ -1,4 +1,4 @@
-#include "irc.hpp"
+#include "../include/irc.hpp"
 
 int main(int argc, char** argv)
 {

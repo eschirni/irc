@@ -1,4 +1,4 @@
-#include "irc.hpp"
+#include "../include/irc.hpp"
 
 static int	input_check(char** argv)
 {

@@ -1,4 +1,4 @@
-#include "irc.hpp"
+#include "../include/irc.hpp"
 
 static int	check_approval(t_serv* serv, User& user)
 {
