@@ -2,7 +2,7 @@
 
 /*********************** CONSTRUCTION / DESTRUCTION ****************************/
 
-User::User(int fd, t_serv *serv) : _fd(fd), _serv(serv), _first_msg(true), _approved(false) {}
+User::User(int fd, t_serv *serv) : _fd(fd), _serv(serv), _first_msg(true), _approved(false), _is_oper(false) {}
 
 User::~User(void) {}
 
@@ -52,67 +52,6 @@ std::map<int, User>::iterator	User::get_user(const std::string nick)
 	return it;
 }
 
-int	User::get_current_command(void)
-{
-	if (_client_msg.compare(0, 4, "NICK") == 0)
-		return NICK;
-	else if (_client_msg.compare(0, 4, "USER") == 0)
-		return USER;
-	else if (_client_msg.compare(0, 4, "OPER") == 0)
-		return OPER;
-	else if (_client_msg.compare(0, 4, "QUIT") == 0)
-		return QUIT;
-	else if (_client_msg.compare(0, 4, "JOIN") == 0)
-		return JOIN;
-	else if (_client_msg.compare(0, 4, "PART") == 0)
-		return PART;
-	else if (_client_msg.compare(0, 5, "TOPIC") == 0)
-		return TOPIC;
-	else if (_client_msg.compare(0, 5, "NAMES") == 0)
-		return NAMES;
-	else if (_client_msg.compare(0, 4, "LIST") == 0)
-		return LIST;
-	else if (_client_msg.compare(0, 6, "INVITE") == 0)
-		return INVITE;
-	else if (_client_msg.compare(0, 4, "KICK") == 0)
-		return KICK;
-	else if (_client_msg.compare(0, 7, "PRIVMSG") == 0)
-		return PRIVMSG;
-	else if (_client_msg.compare(0, 6, "NOTICE") == 0)
-		return NOTICE;
-	else if (_client_msg.compare(0, 4, "INFO") == 0)
-		return INFO;
-	else if (_client_msg.compare(0, 4, "KILL") == 0)
-		return KILL;
-	else if (_client_msg.compare(0, 4, "PING") == 0)
-		return PING;
-	else if (_client_msg.compare(0, 3, "DIE") == 0)
-		return DIE;
-	else
-		return -1;
-}
-
-void User::oper(std::string nick, std::string pwd)
-{
-	std::string msg = RPL_BADCHANPASS;
-
-	if (pwd != "teapot")
-		send(this->_fd, msg.c_str(), msg.length(), 0);
-	else
-	{
-		std::map<int, User>::iterator it = this->get_user(nick);
-		if (it == this->_serv->users.end())
-		{
-			msg = ERR_NOSUCHNICK + nick + " :not found.\r\n";
-			send(this->_fd, msg.c_str(), msg.length(), 0);
-			return ;
-		}
-		it->second._is_oper = true;
-		msg = RPL_YOUREOPER;
-		send(it->second._fd, msg.c_str(), msg.length(), 0);
-	}
-}
-
 void User::send_all(std::string msg)
 {
 	std::map<int, User>::iterator it = this->_serv->users.begin();
@@ -122,20 +61,6 @@ void User::send_all(std::string msg)
 		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
 		++it;
 	}
-}
-
-void User::nick(std::string nick) //needs to change the weechat name smh
-{
-	if (this->check_nickname(nick) == false)
-		return ;
-	this->send_all(":" + this->_nick_name + "!" + this->_user_name + "@" + SERV_ADDR + " NICK " + nick + "\r\n");
-	this->_nick_name = nick;
-}
-
-void User::ping(std::string msg)
-{
-	msg = "PONG " + msg + "\r\n";
-	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
 
 //TODO kick, PART, JOIN <- Create Channel class
@@ -268,6 +193,9 @@ int	User::process_msg(void)
 			break;
 		case PING:
 			this->ping(arg);
+			break;
+		case KILL:
+			this->kill(arg, arg2);
 			break;
 
 		/* FILE TRANSFER */
