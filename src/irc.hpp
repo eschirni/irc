@@ -40,6 +40,7 @@
 # define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
 # define RPL_BADCHANPASS	":irc_serv.42HN.de 339 Wrong Password.\r\n"
 # define RPL_YOUREOPER		":irc_serv.42HN.de 381 You are oper.\r\n"
+# define ERR_NOSUCHNICK		":irc_serv.42HN.de 401 "
 # define ERR_PASSWDMISMATCH	":irc_serv.42HN.de 464 Password incorrect.\r\n"
 # define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 Unknown command.\r\n"
 # define ERR_NICKNAMEINUSE	":irc_serv.42HN.de 433 Nickname taken.\r\n"
@@ -70,7 +71,7 @@ class User
 		std::map<int, User>::iterator	get_user(std::string nick);
 		/* cmds */
 		void 		oper(std::string nick, std::string pwd);
-		void		nick(std::string nick);
+		void		nick(const std::string nick);
 		void		ping(std::string msg);
 
 		const int	_fd;

@@ -43,7 +43,7 @@ bool	User::check_nickname(void)
 	return true;
 }
 
-std::map<int, User>::iterator	User::get_user(std::string nick)
+std::map<int, User>::iterator	User::get_user(const std::string nick)
 {
 	std::string msg;
 	std::map<int, User>::iterator it = this->_serv->users.begin();
@@ -97,18 +97,24 @@ void User::oper(std::string nick, std::string pwd)
 {
 	std::string msg = RPL_BADCHANPASS;
 
-	if (pwd != "teapot")
+	if (pwd != "teapot\r\n")
 		send(this->_fd, msg.c_str(), msg.length(), 0);
 	else
 	{
 		std::map<int, User>::iterator it = this->get_user(nick);
+		if (it == this->_serv->users.end())
+		{
+			msg = ERR_NOSUCHNICK + nick + " :not found.\r\n";
+			send(this->_fd, msg.c_str(), msg.length(), 0);
+			return ;
+		}
 		it->second.is_oper = true;
 		msg = RPL_YOUREOPER;
 		send(it->second._fd, msg.c_str(), msg.length(), 0);
 	}
 }
 
-void User::nick(std::string nick)
+void User::nick(std::string nick) //need to reply smth
 {
 	if (this->check_nickname() == false)
 		return ;
@@ -228,17 +234,19 @@ int	User::process_msg(void)
 		return EXIT_FAILURE;
 	if (_client_msg.empty())
 		return EXIT_SUCCESS;
-	std::cout << "_client_msg:" << std::endl << _client_msg << std::endl; //debug
 	current_command = get_current_command();
 	int pos = this->_client_msg.find(' '); //split would be awesome
 	std::string arg = this->_client_msg.substr(pos + 1, std::string::npos);
+	int pos2 = arg.find(' ');
+	std::string arg2 = arg.substr(pos2 + 1, std::string::npos);
+	arg = this->_client_msg.substr(pos + 1, pos2);
 	switch (current_command)
 	{
 		case INFO:
 			this->info();
 			break;
 		case OPER:
-			this->oper(arg, "teapot");
+			this->oper(arg, arg2);
 			break;
 		case NICK:
 			this->nick(arg);
@@ -260,5 +268,6 @@ int	User::process_msg(void)
 				return EXIT_FAILURE;
 			break;
 	}
+	this->_client_msg = "";
 	return EXIT_SUCCESS;
 }
