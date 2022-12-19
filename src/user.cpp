@@ -2,7 +2,7 @@
 
 /*********************** CONSTRUCTION / DESTRUCTION ****************************/
 
-User::User(int fd) : _fd(fd), _first_msg(true), _approved(false) {}
+User::User(int fd, t_serv *serv) : _fd(fd), _serv(serv), _first_msg(true), _approved(false) {}
 
 User::~User(void) {}
 
@@ -24,11 +24,11 @@ std::string	User::getNickName(void) const {return _nick_name;}
 
 /**************************** PRIVATE METHODS **********************************/
 
-int	User::check_nickname(t_serv* serv)
+bool	User::check_nickname(void)
 {
 	std::string msg;
-	std::map<int, User>::iterator it = serv->users.begin();
-	std::map<int, User>::iterator end = serv->users.end();
+	std::map<int, User>::iterator it = this->_serv->users.begin();
+	std::map<int, User>::iterator end = this->_serv->users.end();
 
 	while (it != end)
 	{
@@ -36,19 +36,19 @@ int	User::check_nickname(t_serv* serv)
 		{
 			msg += ERR_NICKNAMEINUSE;
 			send(_fd, msg.c_str(), msg.length(), 0);
-			return EXIT_FAILURE;
+			return false;
 		}
 		++it;
 	}
-	return EXIT_SUCCESS;
+	return true;
 }
 
 std::map<int, User>::iterator	User::get_user(std::string nick)
 {
 	std::string msg;
-	std::map<int, User>::iterator it = this->_users->begin();
+	std::map<int, User>::iterator it = this->_serv->users.begin();
 
-	while (it != this->_users->end() && it->second.getNickName() != nick)
+	while (it != this->_serv->users.end() && it->second.getNickName() != nick)
 		++it;
 	return it;
 }
@@ -85,8 +85,8 @@ int	User::get_current_command(void)
 		return INFO;
 	else if (_client_msg.compare(0, 4, "KILL") == 0)
 		return KILL;
-	else if (_client_msg.compare(0, 4, "PONG") == 0)
-		return PONG;
+	else if (_client_msg.compare(0, 4, "PING") == 0)
+		return PING;
 	else if (_client_msg.compare(0, 3, "DIE") == 0)
 		return DIE;
 	else
@@ -107,6 +107,21 @@ void User::oper(std::string nick, std::string pwd)
 		send(it->second._fd, msg.c_str(), msg.length(), 0);
 	}
 }
+
+void User::nick(std::string nick)
+{
+	if (this->check_nickname() == false)
+		return ;
+	this->_nick_name = nick;
+}
+
+void User::ping(std::string msg)
+{
+	msg = "PONG " + msg + "\r\n";
+	send(this->_fd, msg.c_str(), msg.length(), 0);
+}
+
+//TODO kick, PART, JOIN <- Create Channel class
 
 int	User::send_welcome_reply(void)
 {
@@ -135,7 +150,7 @@ void	User::remove_line(int times)
 	}
 }		
 
-int	User::process_handshake(t_serv* serv)
+int	User::process_handshake(void)
 {
 	size_t	pre_pos;
 	size_t	suf_pos;
@@ -158,14 +173,14 @@ int	User::process_handshake(t_serv* serv)
 	suf_pos = _client_msg.find("\r\n", pre_pos);
 	_real_name = _client_msg.substr(pre_pos, suf_pos - pre_pos);
 	remove_line(3);
-	if (check_nickname(serv) == EXIT_FAILURE)
+	if (check_nickname() == false)
 		return EXIT_FAILURE;
 	if (send_welcome_reply() == EXIT_FAILURE)
 		return EXIT_FAILURE;
 	return EXIT_SUCCESS;
 }
 
-int	User::initiate_handshake(t_serv* serv, std::string msg)
+int	User::initiate_handshake(std::string msg)
 {
 	int		crlf_count = 0;
 	int		cmd_count = 0;
@@ -191,7 +206,7 @@ int	User::initiate_handshake(t_serv* serv, std::string msg)
 	}
 	if (cmd_count == 3)
 	{
-		if (process_handshake(serv) == EXIT_FAILURE)
+		if (process_handshake() == EXIT_FAILURE)
 			return EXIT_FAILURE;
 		_first_msg = false;
 		return EXIT_SUCCESS;
@@ -202,23 +217,34 @@ int	User::initiate_handshake(t_serv* serv, std::string msg)
 
 /***************************** PUBLIC METHODS **********************************/
 
-int	User::process_msg(t_serv* serv)
+int	User::process_msg(void)
 {
 	int			current_command;
 	int			return_code;
 	std::string send_msg;
 
-	_client_msg.append(serv->buffer);
-	if (_first_msg == true && initiate_handshake(serv, _client_msg) == EXIT_FAILURE)
+	_client_msg.append(this->_serv->buffer);
+	if (_first_msg == true && initiate_handshake(this->_client_msg) == EXIT_FAILURE)
 		return EXIT_FAILURE;
 	if (_client_msg.empty())
 		return EXIT_SUCCESS;
 	std::cout << "_client_msg:" << std::endl << _client_msg << std::endl; //debug
 	current_command = get_current_command();
+	int pos = this->_client_msg.find(' '); //split would be awesome
+	std::string arg = this->_client_msg.substr(pos + 1, std::string::npos);
 	switch (current_command)
 	{
 		case INFO:
-			info();
+			this->info();
+			break;
+		case OPER:
+			this->oper(arg, "teapot");
+			break;
+		case NICK:
+			this->nick(arg);
+			break;
+		case PING:
+			this->ping(arg);
 			break;
 
 		/* FILE TRANSFER */

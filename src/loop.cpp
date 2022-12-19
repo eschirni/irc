@@ -37,7 +37,7 @@ static bool	establish_new_connection(t_serv* serv)
 	serv->fds.push_back(pollfd());
 	serv->fds.back().fd = usr_fd;
 	serv->fds.back().events = POLLIN;
-	serv->users.insert(std::pair<int, User>(serv->fds.back().fd, User(usr_fd)));
+	serv->users.insert(std::pair<int, User>(serv->fds.back().fd, User(usr_fd, serv)));
 	return true;
 }
 
@@ -53,7 +53,7 @@ static int	process_existing_connection(t_serv* serv, size_t index)
 		return (erase_element(serv, index), error(CCLOSE));
 	if (check_approval(serv, serv->users.find(serv->fds[index].fd)->second) == EXIT_FAILURE)
 		return EXIT_FAILURE;
-	serv->users.find(serv->fds[index].fd)->second.process_msg(serv);
+	serv->users.find(serv->fds[index].fd)->second.process_msg();
 	return EXIT_SUCCESS;
 }
 

@@ -60,38 +60,38 @@ typedef struct s_serv
 class User
 {
 	private:
-		User(void);
-
-		int		initiate_handshake(t_serv* serv, std::string msg);
-		int		process_handshake(t_serv* serv);
+		int		initiate_handshake(std::string msg);
+		int		process_handshake(void);
 		void	remove_line(int time = 1);
 		int		send_welcome_reply(void);
 		int		get_current_command(void);
-		int		check_nickname(t_serv* serv);
+		bool	check_nickname(void);
 		int		info(void);
 		std::map<int, User>::iterator	get_user(std::string nick);
 		/* cmds */
 		void 		oper(std::string nick, std::string pwd);
+		void		nick(std::string nick);
+		void		ping(std::string msg);
 
 		const int	_fd;
-		std::string	_client_msg;
+		t_serv		*_serv;
 		bool		_first_msg;
+		bool		_approved;
+		bool		is_oper; //idk if server op is okay
+		std::string	_client_msg;
 		std::string	_nick_name;
 		std::string	_user_name;
 		std::string	_real_name;
 		int			_user_mode;
-		bool		_approved;
-		std::map<int, User>	*_users;
-		bool		is_oper; //idk if server op is okay
 
 	public:
-		User(int fd);
+		User(int fd, t_serv *serv);
 		~User(void);
 
 		std::string	getClientMsg(void) const;
 		bool		getApproved(void) const;
 		void		setApproved(bool approval);
-		int			process_msg(t_serv* serv);
+		int			process_msg(void);
 		bool		getFirstMsg(void) const;
 		int			getFd(void) const;
 		std::string	getNickName(void) const;
@@ -124,7 +124,7 @@ enum e_commands
 
 				// MISCElLANEOUS MESSAGES
 	KILL,		// Close a client-server connection			[ ]	RFC 2812 3.7.1
-	PONG,		// Reply to PING message					[ ]	[E]RFC 2812 3.7.3
+	PING,		// Reply to PING message					[ ]	[E]RFC 2812 3.7.3
 
 				// OPTIONAL FEATURES
 	DIE,		// Shuts down the server					[ ]	RFC 2812 4.3
