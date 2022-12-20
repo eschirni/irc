@@ -18,6 +18,6 @@ int	User::info(void)
 	return_code = send(_fd, msg.c_str(), msg.length(), 0);
 	if (return_code < 0)
 		return EXIT_FAILURE;
-	remove_line();
+	remove_line(_client_msg);
 	return EXIT_SUCCESS;
 }

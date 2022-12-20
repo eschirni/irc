@@ -106,6 +106,7 @@ void	compress_array(t_serv* serv);
 int		erase_element(t_serv* serv, size_t index);
 int		info(const char* info_msg); //debug
 void	print_str_with_crlf(const char* s, bool print_nonprint = false); //debug
+void	remove_line(std::string& string, int iterations = 1);
 
 
 /**************************** ERROR-MESSAGES ***********************************/

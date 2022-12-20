@@ -17,7 +17,6 @@ class User
 	private:
 		/********************** PIRVATE METHODS ************************/
 
-		void		remove_line(int time = 1);
 		void		send_all(std::string msg);
 		bool		check_nickname(std::string nick);
 		int			initiate_handshake(std::string msg);

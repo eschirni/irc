@@ -152,21 +152,6 @@ int	User::send_welcome_reply(void)
 	return EXIT_SUCCESS;
 }
 
-void	User::remove_line(int times)
-{
-	size_t					crlf_pos;
-	std::string::iterator	from;
-	std::string::iterator	to;
-
-	for (int i = 0; i < times; i++)
-	{
-		crlf_pos = _client_msg.find("\r\n", 0) + 2;
-		from = _client_msg.begin();
-		to = _client_msg.begin() + crlf_pos;
-		_client_msg.erase(from, to);
-	}
-}		
-
 int	User::process_handshake(void)
 {
 	size_t	pre_pos;
@@ -189,7 +174,7 @@ int	User::process_handshake(void)
 	pre_pos = _client_msg.find(":", pre_pos) + 1;
 	suf_pos = _client_msg.find("\r\n", pre_pos);
 	_real_name = _client_msg.substr(pre_pos, suf_pos - pre_pos);
-	remove_line(3);
+	remove_line(_client_msg, 3);
 	if (check_nickname(this->_nick_name) == false)
 		return EXIT_FAILURE;
 	if (send_welcome_reply() == EXIT_FAILURE)
