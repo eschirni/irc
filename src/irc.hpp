@@ -39,11 +39,13 @@
 # define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
 # define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
 # define RPL_BADCHANPASS	":irc_serv.42HN.de 339 Wrong Password.\r\n"
+# define RPL_KILLDONE		":irc_serv.42HN.de 361 User was kicked\r\n"
 # define RPL_YOUREOPER		":irc_serv.42HN.de 381 You are oper.\r\n"
 # define ERR_NOSUCHNICK		":irc_serv.42HN.de 401 "
 # define ERR_PASSWDMISMATCH	":irc_serv.42HN.de 464 Password incorrect.\r\n"
 # define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 Unknown command.\r\n"
 # define ERR_NICKNAMEINUSE	":irc_serv.42HN.de 433 "
+# define ERR_NOPRIVILEGES	":irc_serv.42HN.de 481 " + _nick_name + " :Not an oper\r\n"
 
 /*	structs	*/
 class User;
@@ -74,6 +76,8 @@ class User
 		void 		oper(std::string nick, std::string pwd);
 		void		nick(const std::string nick);
 		void		ping(std::string msg);
+		void		kill(std::string nick, std::string reason);
+		void		privmsg(std::string target, std::string text);
 
 		const int	_fd;
 		t_serv		*_serv;
@@ -103,9 +107,9 @@ class User
 enum e_commands
 {
 				// CONNECTION REGISTRATION
-	NICK,		// Change Nickname							[ ]	[E]RFC 2812 3.1.2
+	NICK,		// Change Nickname							[X]	[E]RFC 2812 3.1.2
 	USER,		// Set username and other options			[ ]	[E]RFC 2812 3.1.3
-	OPER,		// Gain Operator Status						[ ]	[E]RFC 2812 3.1.4
+	OPER,		// Gain Operator Status						[X]	[E]RFC 2812 3.1.4
 	QUIT,		// Acknowleges to client that user quit		[ ]	RFC 2812 3.1.7
 
 				// CHANNEL OPERATIONS
@@ -125,8 +129,8 @@ enum e_commands
 	INFO,		// Information about the server (help?)		[ ]	RFC 2812 3.4.10
 
 				// MISCElLANEOUS MESSAGES
-	KILL,		// Close a client-server connection			[ ]	RFC 2812 3.7.1
-	PING,		// Reply to PING message					[ ]	[E]RFC 2812 3.7.3
+	KILL,		// Close a client-server connection			[X]	RFC 2812 3.7.1
+	PING,		// Reply to PING message					[X]	[E]RFC 2812 3.7.3
 
 				// OPTIONAL FEATURES
 	DIE,		// Shuts down the server					[ ]	RFC 2812 4.3
