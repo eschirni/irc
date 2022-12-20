@@ -113,3 +113,15 @@ void User::kill(std::string nick, std::string reason)
 	}
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
+
+void User::privmsg(std::string target, std::string text)
+{
+	if (target[0] == '#') //need to implement
+		return ;
+	std::map<int, User>::iterator it = this->get_user(target);
+	std::string msg = ":" + this->_nick_name + " PRIVMSG " + this->_nick_name + " " + text + "\r\n";
+
+	if (it == this->_serv->users.end())
+		msg = ERR_NOSUCHNICK + target + " :User or channel not found.\r\n";
+	send(it->second.getFd(), msg.c_str(), msg.length(), 0);
+}

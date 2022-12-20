@@ -180,6 +180,7 @@ int	User::process_msg(void)
 	arg = arg.substr(0, pos);
 	pos = arg2.find('\r');
 	arg2 = arg2.substr(0, pos);
+	std::cout << this->_client_msg;
 	switch (current_command)
 	{
 		case INFO:
@@ -196,6 +197,9 @@ int	User::process_msg(void)
 			break;
 		case KILL:
 			this->kill(arg, arg2);
+			break;
+		case PRIVMSG:
+			this->privmsg(arg, arg2);
 			break;
 
 		/* FILE TRANSFER */

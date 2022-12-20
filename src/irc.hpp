@@ -77,6 +77,7 @@ class User
 		void		nick(const std::string nick);
 		void		ping(std::string msg);
 		void		kill(std::string nick, std::string reason);
+		void		privmsg(std::string target, std::string text);
 
 		const int	_fd;
 		t_serv		*_serv;
@@ -128,7 +129,7 @@ enum e_commands
 	INFO,		// Information about the server (help?)		[ ]	RFC 2812 3.4.10
 
 				// MISCElLANEOUS MESSAGES
-	KILL,		// Close a client-server connection			[ ]	RFC 2812 3.7.1
+	KILL,		// Close a client-server connection			[X]	RFC 2812 3.7.1
 	PING,		// Reply to PING message					[X]	[E]RFC 2812 3.7.3
 
 				// OPTIONAL FEATURES
