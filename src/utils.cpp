@@ -1,4 +1,19 @@
-#include "irc.hpp"
+#include "../include/irc.hpp"
+
+void	remove_line(std::string& string, int iterations)
+{
+	size_t					crlf;
+	std::string::iterator 	from;
+	std::string::iterator	to;
+
+	for (int i = 0; i < iterations; ++i)
+	{
+		crlf = string.find(CRLF) + static_cast<std::string>(CRLF).length();
+		from = string.begin();
+		to = string.begin() + crlf;
+		string.erase(from, to);
+	}
+}
 
 int	error(const int errno_code)
 {

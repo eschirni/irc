@@ -1,4 +1,4 @@
-#include "irc.hpp"
+#include "../include/irc.hpp"
 
 static int	check_approval(t_serv* serv, User& user)
 {
@@ -19,10 +19,7 @@ static int	check_approval(t_serv* serv, User& user)
 		return EXIT_FAILURE;
 	}
 
-	crlf = buffer.find("\r\n") + static_cast<std::string>("\r\n").length();
-	std::string::iterator from = buffer.begin();
-	std::string::iterator to = buffer.begin() + crlf;
-	buffer.erase(from, to);
+	remove_line(buffer);
 	buffer.resize(BUFFER_SIZE);
 	strncpy(serv->buffer, buffer.c_str(), BUFFER_SIZE);
 	user.setApproved(true);
