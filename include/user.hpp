@@ -32,6 +32,8 @@ class User
 		void 		oper(std::string nick, std::string pwd);
 		void		nick(const std::string nick);
 		void		ping(std::string msg);
+		void		kill(std::string nick, std::string reason);
+		void		privmsg(std::string target, std::string text);
 
 
 		/********************** DATA-MEMBERS ***************************/
