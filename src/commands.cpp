@@ -134,6 +134,11 @@ void User::privmsg(std::string target, std::string text)
 		msg = ERR_NOSUCHNICK + target + " :User or channel not found.\r\n";
 		send(this->_fd, msg.c_str(), msg.length(), 0);
 	}
+	else if (it->second._mode == 'a')
+	{
+		msg = RPL_AWAY + it->second._nick_name + " " + it->second._away_msg + "\r\n";
+		send(this->_fd, msg.c_str(), msg.length(), 0);
+	}
 	else
 		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
 }
