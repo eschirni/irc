@@ -44,8 +44,8 @@
 # define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
 # define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
 # define RPL_LUSERUNKNOWN	":irc_serv.42HN.de 253 0 :Unknown users\r\n"
-# define RPL_UNAWAY			":irc_serv.42HN.de 305 :No longer marked as away\r\n"
-# define RPL_NOWAWAY		":irc_serv.42HN.de 306 :Now marked as away\r\n"
+# define RPL_UNAWAY			"305 RPL_UNAWAY :You are no longer marked as being away\r\n"
+# define RPL_NOWAWAY		"306 RPL_NOWAWAY :You have been marked as being away\r\n"
 # define RPL_BADCHANPASS	":irc_serv.42HN.de 339 Wrong Password\r\n"
 # define RPL_KILLDONE		":irc_serv.42HN.de 361 User was kicked\r\n"
 # define RPL_YOUREOPER		":irc_serv.42HN.de 381 You are oper\r\n"

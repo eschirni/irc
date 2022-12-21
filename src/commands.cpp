@@ -161,7 +161,7 @@ void User::lusers(void)
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
 
-void User::user(std::string username, std::string arg) //write set_mode function, needs testing, idk what weechat command sends USER
+void User::user(std::string username, std::string arg) //needs testing, idk what weechat command sends USER
 {
 	char mode = arg[0];
 	std::string realname = arg.substr(arg.find(':'), std::string::npos);
@@ -177,9 +177,10 @@ void User::away(std::string away_msg)
 	std::string msg = RPL_NOWAWAY;
 
 	this->_away_msg = away_msg;
-	if (away_msg == "")
+	if (away_msg == "AWAY")
 	{
 		this->_mode = '0';
+		this->_away_msg = "";
 		msg = RPL_UNAWAY;
 	}
 	else
