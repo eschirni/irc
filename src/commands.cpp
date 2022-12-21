@@ -2,7 +2,7 @@
 #include <sstream>
 
 template <typename T>
-std::string NumberToString ( T Number )
+std::string NumberToString (T Number)
 {
 	std::ostringstream ss;
 	ss << Number;
@@ -15,10 +15,8 @@ int	User::get_current_command(void)
 {
 	if (_client_msg.compare(0, 4, "NICK") == 0)
 		return NICK;
-	else if (_client_msg.compare(0, 4, "USER") == 0)
+	else if (_client_msg.compare(0, 4, "USER") == 0 && _client_msg.compare(0, 5, "USERS") == 1)
 		return USER;
-	else if (_client_msg.compare(0, 6, "LUSERS") == 0)
-		return LUSERS;
 	else if (_client_msg.compare(0, 4, "OPER") == 0)
 		return OPER;
 	else if (_client_msg.compare(0, 4, "QUIT") == 0)
@@ -41,6 +39,8 @@ int	User::get_current_command(void)
 		return PRIVMSG;
 	else if (_client_msg.compare(0, 6, "NOTICE") == 0)
 		return NOTICE;
+	else if (_client_msg.compare(0, 6, "LUSERS") == 0)
+		return LUSERS;
 	else if (_client_msg.compare(0, 4, "INFO") == 0)
 		return INFO;
 	else if (_client_msg.compare(0, 4, "KILL") == 0)
@@ -136,7 +136,7 @@ void User::privmsg(std::string target, std::string text)
 		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
 }
 
-void User::lusers(void) //to_string is cpp11 :clown:
+void User::lusers(void)
 {
 	int users = 0;
 	int invisible = 0; //todo
@@ -157,4 +157,14 @@ void User::lusers(void) //to_string is cpp11 :clown:
 	msg.append(":irc_serv.42HN.de 254 " + NumberToString(channels) + " :Channels on the server\r\n");
 	msg.append(":irc_serv.42HN.de 255 :I have " + NumberToString(users) + " clients and 1 server\r\n");
 	send(this->_fd, msg.c_str(), msg.length(), 0);
+}
+
+void User::user(std::string username, std::string arg) //write set_mode function, needs testing, idk what weechat command sends USER
+{
+	char mode = arg[0];
+	std::string realname = arg.substr(arg.find(':'), std::string::npos);
+	std::cout << realname << std::endl;
+	this->_user_name = username;
+	this->_mode = mode;
+	this->_real_name = realname;
 }
