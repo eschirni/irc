@@ -36,6 +36,7 @@ class User
 		void	privmsg(std::string target, std::string text);
 		void	lusers(void);
 		void	user(std::string username, std::string arg);
+		void	away(std::string reply);
 
 		/********************** DATA-MEMBERS ***************************/
 
@@ -45,11 +46,11 @@ class User
 		bool		_approved;
 		bool		_is_oper;
 		char		_mode;
-		int			_user_mode;
 		std::string	_client_msg;
 		std::string	_nick_name;
 		std::string	_user_name;
 		std::string	_real_name;
+		std::string	_away_msg;
 
 	public:
 		/********************** CONSTRUCTION ***************************/

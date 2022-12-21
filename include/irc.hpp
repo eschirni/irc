@@ -44,6 +44,8 @@
 # define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
 # define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
 # define RPL_LUSERUNKNOWN	":irc_serv.42HN.de 253 0 :Unknown users\r\n"
+# define RPL_UNAWAY			":irc_serv.42HN.de 305 :No longer marked as away\r\n"
+# define RPL_NOWAWAY		":irc_serv.42HN.de 306 :Now marked as away\r\n"
 # define RPL_BADCHANPASS	":irc_serv.42HN.de 339 Wrong Password\r\n"
 # define RPL_KILLDONE		":irc_serv.42HN.de 361 User was kicked\r\n"
 # define RPL_YOUREOPER		":irc_serv.42HN.de 381 You are oper\r\n"
@@ -89,6 +91,7 @@ enum e_commands
 	LUSERS,		// Displays information about Server & Clients  RFC 2812 3.4.2
 	INFO,		// Information about the server (help?)			RFC 2812 3.4.10
 	KILL,		// Close a client-server connection				RFC 2812 3.7.1
+	AWAY,		// Sets the User on away						RFC 2812 4.1
 	DIE			// Shuts down the server						RFC 2812 4.3
 };
 

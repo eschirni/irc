@@ -49,6 +49,8 @@ int	User::get_current_command(void)
 		return PING;
 	else if (_client_msg.compare(0, 3, "DIE") == 0)
 		return DIE;
+	else if (this->_client_msg.compare(0, 4, "AWAY") == 0)
+		return (AWAY);
 	else
 		return -1;
 }
@@ -163,8 +165,24 @@ void User::user(std::string username, std::string arg) //write set_mode function
 {
 	char mode = arg[0];
 	std::string realname = arg.substr(arg.find(':'), std::string::npos);
-	std::cout << realname << std::endl;
+
+	std::cout << realname << std::endl; //debug
 	this->_user_name = username;
 	this->_mode = mode;
 	this->_real_name = realname;
+}
+
+void User::away(std::string away_msg)
+{
+	std::string msg = RPL_NOWAWAY;
+
+	this->_away_msg = away_msg;
+	if (away_msg == "")
+	{
+		this->_mode = '0';
+		msg = RPL_UNAWAY;
+	}
+	else
+		this->_mode = 'a';
+	send(this->_fd, msg.c_str(), msg.length(), 0);
 }

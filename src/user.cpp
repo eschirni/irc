@@ -93,7 +93,7 @@ int	User::process_handshake(void)
 	_user_name = _client_msg.substr(pre_pos, suf_pos - pre_pos);
 
 	/* USER_MODE */
-	_user_mode = std::strtod(&_client_msg[suf_pos + 1], NULL);
+	this->_mode = _client_msg[suf_pos + 1];
 
 	/* REAL_NAME */
 	pre_pos = _client_msg.find(":", pre_pos) + 1;
@@ -156,7 +156,7 @@ int	User::process_msg(void)
 	if (_client_msg.empty())
 		return EXIT_SUCCESS;
 	current_command = get_current_command();
-	int pos = this->_client_msg.find(' '); //split would be awesome
+	int pos = this->_client_msg.find(' ');
 	std::string arg = this->_client_msg.substr(pos + 1, std::string::npos);
 	int pos2 = arg.find(' ');
 	std::string arg2 = arg.substr(pos2 + 1, std::string::npos);
@@ -165,7 +165,7 @@ int	User::process_msg(void)
 	arg = arg.substr(0, pos);
 	pos = arg2.find('\r');
 	arg2 = arg2.substr(0, pos);
-	std::cout << this->_client_msg;
+	std::cout << this->_client_msg; //debug
 	switch (current_command)
 	{
 		case INFO:
@@ -191,6 +191,9 @@ int	User::process_msg(void)
 			break;
 		case USER:
 			this->user(arg, arg2);
+			break;
+		case AWAY:
+			this->away(arg);
 			break;
 
 		/* FILE TRANSFER */
