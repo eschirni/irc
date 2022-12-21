@@ -1,4 +1,13 @@
 #include "../include/irc.hpp"
+#include <sstream>
+
+template <typename T>
+std::string NumberToString ( T Number )
+{
+	std::ostringstream ss;
+	ss << Number;
+	return ss.str();
+}
 
 /****************************** COMMANDS ***************************************/
 
@@ -8,6 +17,8 @@ int	User::get_current_command(void)
 		return NICK;
 	else if (_client_msg.compare(0, 4, "USER") == 0)
 		return USER;
+	else if (_client_msg.compare(0, 6, "LUSERS") == 0)
+		return LUSERS;
 	else if (_client_msg.compare(0, 4, "OPER") == 0)
 		return OPER;
 	else if (_client_msg.compare(0, 4, "QUIT") == 0)
@@ -42,10 +53,9 @@ int	User::get_current_command(void)
 		return -1;
 }
 
-int	User::info(void)
+void User::info(void)
 {
 	std::string	msg;
-	int			return_code;
 
 	msg += ":irc_serv.42HN.de 371 \t\r\n";
 	msg += ":irc_serv.42HN.de 371 ATTENTION:\r\n";
@@ -55,11 +65,7 @@ int	User::info(void)
 	msg += ":irc_serv.42HN.de 371 user -- Set username and other options\r\n";
 	msg += ":irc_serv.42HN.de 371 oper -- Gain operator status\r\n";
 	msg += ":irc_serv.42HN.de 371 quit -- quit the server\r\n";
-	return_code = send(_fd, msg.c_str(), msg.length(), 0);
-	if (return_code < 0)
-		return EXIT_FAILURE;
-	remove_line(_client_msg);
-	return EXIT_SUCCESS;
+	send(_fd, msg.c_str(), msg.length(), 0);
 }
 
 void User::oper(std::string nick, std::string pwd)
@@ -116,10 +122,10 @@ void User::kill(std::string nick, std::string reason)
 
 void User::privmsg(std::string target, std::string text)
 {
-	if (target[0] == '#') //need to implement
+	if (target[0] == '#') //todo
 		return ;
 	std::map<int, User>::iterator it = this->get_user(target);
-	std::string msg = ":" + this->_nick_name + " PRIVMSG " + this->_nick_name + " " + text + "\r\n";
+	std::string msg = ":" + this->_nick_name + " PRIVMSG " + target + " " + text + "\r\n";
 
 	if (it == this->_serv->users.end())
 	{
@@ -128,4 +134,27 @@ void User::privmsg(std::string target, std::string text)
 	}
 	else
 		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
+}
+
+void User::lusers(void) //to_string is cpp11 :clown:
+{
+	int users = 0;
+	int invisible = 0; //todo
+	int ops = 0;
+	int channels = 0; //todo
+
+	mapite_t it = this->_serv->users.begin();
+	while (it != this->_serv->users.end())
+	{
+		++users;
+		if (it->second._is_oper == true)
+			++ops;
+		++it;
+	}
+	std::string msg = ":irc_serv.42HN.de 251 :There are " + NumberToString(users) + " users and " + NumberToString(invisible) + " invisible users on 1 server\r\n";
+	msg.append(":irc_serv.42HN.de 252 " + NumberToString(ops) + " :Operators on the server\r\n");
+	msg.append(RPL_LUSERUNKNOWN);
+	msg.append(":irc_serv.42HN.de 254 " + NumberToString(channels) + " :Channels on the server\r\n");
+	msg.append(":irc_serv.42HN.de 255 :I have " + NumberToString(users) + " clients and 1 server\r\n");
+	send(this->_fd, msg.c_str(), msg.length(), 0);
 }

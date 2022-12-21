@@ -43,9 +43,10 @@
 # define RPL_WELCOME		":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
 # define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
 # define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
-# define RPL_BADCHANPASS	":irc_serv.42HN.de 339 Wrong Password.\r\n"
+# define RPL_LUSERUNKNOWN	":irc_serv.42HN.de 253 0 :Unknown users\r\n"
+# define RPL_BADCHANPASS	":irc_serv.42HN.de 339 Wrong Password\r\n"
 # define RPL_KILLDONE		":irc_serv.42HN.de 361 User was kicked\r\n"
-# define RPL_YOUREOPER		":irc_serv.42HN.de 381 You are oper.\r\n"
+# define RPL_YOUREOPER		":irc_serv.42HN.de 381 You are oper\r\n"
 # define ERR_NOSUCHNICK		":irc_serv.42HN.de 401 "
 # define ERR_PASSWDMISMATCH	":irc_serv.42HN.de 464 Password incorrect.\r\n"
 # define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 Unknown command.\r\n"
@@ -85,9 +86,10 @@ enum e_commands
 	NAMES,		// List users in channel						RFC 2812 3.2.5
 	LIST,		// List channels in server						RFC 2812 3.2.6
 	INVITE,		// Invite user to channel						RFC 2812 3.2.7
+	LUSERS,		// Displays information about Server & Clients  RFC 2812 3.4.2
 	INFO,		// Information about the server (help?)			RFC 2812 3.4.10
 	KILL,		// Close a client-server connection				RFC 2812 3.7.1
-	DIE,		// Shuts down the server						RFC 2812 4.3
+	DIE			// Shuts down the server						RFC 2812 4.3
 };
 
 

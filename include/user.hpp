@@ -28,12 +28,13 @@ class User
 
 		/************************ COMMANDS *****************************/
 
-		int			info(void);
-		void 		oper(std::string nick, std::string pwd);
-		void		nick(const std::string nick);
-		void		ping(std::string msg);
-		void		kill(std::string nick, std::string reason);
-		void		privmsg(std::string target, std::string text);
+		void	info(void);
+		void 	oper(std::string nick, std::string pwd);
+		void	nick(const std::string nick);
+		void	ping(std::string msg);
+		void	kill(std::string nick, std::string reason);
+		void	privmsg(std::string target, std::string text);
+		void	lusers(void);
 
 
 		/********************** DATA-MEMBERS ***************************/

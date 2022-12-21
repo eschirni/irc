@@ -186,6 +186,9 @@ int	User::process_msg(void)
 		case PRIVMSG:
 			this->privmsg(arg, arg2);
 			break;
+		case LUSERS:
+			this->lusers();
+			break;
 
 		/* FILE TRANSFER */
 		// trying to send the file 'file.txt' to user 'someone' via the following command in weechat:
