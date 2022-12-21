@@ -15,8 +15,6 @@ int	User::get_current_command(void)
 {
 	if (_client_msg.compare(0, 4, "NICK") == 0)
 		return NICK;
-	else if (_client_msg.compare(0, 4, "USER") == 0 && _client_msg.compare(0, 5, "USERS") == 1)
-		return USER;
 	else if (_client_msg.compare(0, 4, "OPER") == 0)
 		return OPER;
 	else if (_client_msg.compare(0, 4, "QUIT") == 0)
@@ -51,6 +49,8 @@ int	User::get_current_command(void)
 		return DIE;
 	else if (this->_client_msg.compare(0, 4, "AWAY") == 0)
 		return (AWAY);
+	else if (this->_client_msg.compare(0, 4, "MODE") == 0)
+		return (MODE);
 	else
 		return -1;
 }
@@ -85,7 +85,7 @@ void User::oper(std::string nick, std::string pwd)
 			send(this->_fd, msg.c_str(), msg.length(), 0);
 			return ;
 		}
-		it->second._is_oper = true;
+		it->second._mode = 'o';
 		msg = RPL_YOUREOPER;
 		send(it->second._fd, msg.c_str(), msg.length(), 0);
 	}
@@ -112,7 +112,7 @@ void User::kill(std::string nick, std::string reason)
 
 	if (it == this->_serv->users.end())
 		msg = ERR_NOSUCHNICK + nick + " :User not found.\r\n";
-	else if (this->_is_oper == true)
+	else if (this->_mode == 'o')
 	{
 		msg = ":irc_serv.42HN.de 371 You have been kicked: " + reason + "\r\n";
 		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
@@ -146,7 +146,7 @@ void User::privmsg(std::string target, std::string text)
 void User::lusers(void)
 {
 	int users = 0;
-	int invisible = 0; //todo
+	int invisible = 0;
 	int ops = 0;
 	int channels = 0; //todo
 
@@ -154,8 +154,10 @@ void User::lusers(void)
 	while (it != this->_serv->users.end())
 	{
 		++users;
-		if (it->second._is_oper == true)
+		if (it->second._mode == 'o')
 			++ops;
+		else if (it->second._mode == 'i')
+			++invisible;
 		++it;
 	}
 	std::string msg = ":irc_serv.42HN.de 251 :There are " + NumberToString(users) + " users and " + NumberToString(invisible) + " invisible users on 1 server\r\n";
@@ -164,17 +166,6 @@ void User::lusers(void)
 	msg.append(":irc_serv.42HN.de 254 " + NumberToString(channels) + " :Channels on the server\r\n");
 	msg.append(":irc_serv.42HN.de 255 :I have " + NumberToString(users) + " clients and 1 server\r\n");
 	send(this->_fd, msg.c_str(), msg.length(), 0);
-}
-
-void User::user(std::string username, std::string arg) //needs testing, idk what weechat command sends USER
-{
-	char mode = arg[0];
-	std::string realname = arg.substr(arg.find(':'), std::string::npos);
-
-	std::cout << realname << std::endl; //debug
-	this->_user_name = username;
-	this->_mode = mode;
-	this->_real_name = realname;
 }
 
 void User::away(std::string away_msg)
@@ -190,5 +181,30 @@ void User::away(std::string away_msg)
 	}
 	else
 		this->_mode = 'a';
+	send(this->_fd, msg.c_str(), msg.length(), 0);
+}
+
+void User::mode(std::string target, std::string mode) //need to fix basic confilcts with oper and away, users can only have one mode on OUR SERVER HEHE
+{
+	std::string msg;
+	if (target[0] == '#') //todo
+		return ;
+	else
+	{
+		if (target != this->_nick_name)
+			msg = ERR_USERSDONTMATCH + target + " :Target name doesn't match your nickname\r\n";
+		else if (target == mode)
+			msg = ERR_NEEDMOREPARAMS;
+		else if ((mode[0] != '+' && mode[0] != '-') || (mode[1] != 'o' && mode[1] != 'O' && mode[1] != 'i'))
+			msg = ERR_UMODEUNKNOWN + mode + " :No valid mode\r\n";
+		else
+		{
+			if (mode[0] == '+' && (mode[1] != 'o' && mode[1] != 'O'))
+				this->_mode = mode[1];
+			else if (mode[0] == '-')
+				this->_mode = '0';
+			msg = RPL_UMODEIS + this->_nick_name + " " + this->_mode + CRLF;
+		}
+	}
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }

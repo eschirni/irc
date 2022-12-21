@@ -35,8 +35,8 @@ class User
 		void	kill(std::string nick, std::string reason);
 		void	privmsg(std::string target, std::string text);
 		void	lusers(void);
-		void	user(std::string username, std::string arg);
 		void	away(std::string reply);
+		void	mode(std::string target, std::string mode);
 
 		/********************** DATA-MEMBERS ***************************/
 
@@ -44,7 +44,6 @@ class User
 		t_serv		*_serv;
 		bool		_first_msg;
 		bool		_approved;
-		bool		_is_oper;
 		char		_mode;
 		std::string	_client_msg;
 		std::string	_nick_name;

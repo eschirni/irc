@@ -43,6 +43,7 @@
 # define RPL_WELCOME		":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
 # define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
 # define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
+# define RPL_UMODEIS		":irc_serv.42HN.de 221 "
 # define RPL_LUSERUNKNOWN	":irc_serv.42HN.de 253 0 :Unknown users\r\n"
 # define RPL_AWAY			"301 RPL_AWAY "
 # define RPL_UNAWAY			"305 RPL_UNAWAY :You are no longer marked as being away\r\n"
@@ -52,9 +53,12 @@
 # define RPL_YOUREOPER		":irc_serv.42HN.de 381 You are oper\r\n"
 # define ERR_NOSUCHNICK		":irc_serv.42HN.de 401 "
 # define ERR_PASSWDMISMATCH	":irc_serv.42HN.de 464 Password incorrect.\r\n"
-# define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 Unknown command.\r\n"
+# define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 "
 # define ERR_NICKNAMEINUSE	":irc_serv.42HN.de 433 "
+# define ERR_NEEDMOREPARAMS	":irc_serv.42HN.de 461 MODE :No mode specified\r\n"
 # define ERR_NOPRIVILEGES	":irc_serv.42HN.de 481 " + _nick_name + " :Not an oper\r\n"
+# define ERR_UMODEUNKNOWN	":irc_serv.42HN.de 501 "
+# define ERR_USERSDONTMATCH	":irc_serv.42HN.de 502 "
 
 
 /***************************** SERVER-STRUCT ***********************************/
@@ -75,7 +79,6 @@ typedef struct s_serv
 enum e_commands
 {
 	NICK,		// Change Nickname								RFC 2812 3.1.2
-	USER,		// Set username and other options				RFC 2812 3.1.3
 	OPER,		// Gain Operator Status							RFC 2812 3.1.4
 	JOIN,		// Joining Channel								RFC 2812 3.2.1
 	PART,		// Leaving Channel								RFC 2812 3.2.2
@@ -84,6 +87,7 @@ enum e_commands
 	NOTICE,		// Kinda the same as PRIVMSG					RFC 2812 3.3.2
 	PING,		// Reply to PING message						RFC 2812 3.7.3
 
+	MODE,		// Sets user or channel modes					RFC 2812 3.1.5
 	QUIT,		// Acknowleges to client that user quit			RFC 2812 3.1.7
 	TOPIC,		// Set or change a channels description			RFC 2812 3.2.4
 	NAMES,		// List users in channel						RFC 2812 3.2.5

@@ -2,7 +2,7 @@
 
 /*********************** CONSTRUCTION / DESTRUCTION ****************************/
 
-User::User(int fd, t_serv *serv) : _fd(fd), _serv(serv), _first_msg(true), _approved(false), _is_oper(false) {}
+User::User(int fd, t_serv *serv) : _fd(fd), _serv(serv), _first_msg(true), _approved(false) {}
 
 User::~User(void) {}
 
@@ -147,7 +147,6 @@ int	User::initiate_handshake(std::string msg)
 int	User::process_msg(void)
 {
 	int			current_command;
-	int			return_code;
 	std::string send_msg;
 
 	_client_msg.append(this->_serv->buffer);
@@ -189,11 +188,11 @@ int	User::process_msg(void)
 		case LUSERS:
 			this->lusers();
 			break;
-		case USER:
-			this->user(arg, arg2);
-			break;
 		case AWAY:
 			this->away(arg);
+			break;
+		case MODE:
+			this->mode(arg, arg2);
 			break;
 
 		/* FILE TRANSFER */
@@ -203,10 +202,8 @@ int	User::process_msg(void)
 		// "PRIVMSG someone :DCC SEND file.txt 2886860548 37009 0"
 	
 		default:
-			send_msg = ERR_UNKNOWNCOMMAND;
-			return_code = send(_fd, send_msg.c_str(), send_msg.length(), 0);
-			if (return_code < 0)
-				return EXIT_FAILURE;
+			send_msg = ERR_UNKNOWNCOMMAND + arg + " :Unknown command\r\n";
+			send(_fd, send_msg.c_str(), send_msg.length(), 0);
 			break;
 	}
 	this->_client_msg = "";
