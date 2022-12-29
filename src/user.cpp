@@ -52,6 +52,16 @@ std::map<int, User>::iterator	User::get_user(const std::string nick)
 	return it;
 }
 
+//std::vector<Channel>::iterator	User::get_channel(const std::string name)
+//{
+//	std::string msg;
+//	std::vektor<Channel>::iterator it = this->_serv->channels.begin();
+
+//	while (it != this->_serv->channels.end() && it->second.getName() != name)
+//		++it;
+//	return it;
+//}
+
 void User::send_all(std::string msg)
 {
 	std::map<int, User>::iterator it = this->_serv->users.begin();
@@ -62,8 +72,6 @@ void User::send_all(std::string msg)
 		++it;
 	}
 }
-
-//TODO kick, PART, JOIN <- Create Channel class
 
 int	User::send_welcome_reply(void)
 {

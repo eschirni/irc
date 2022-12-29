@@ -13,6 +13,7 @@
 # include <unistd.h>		// close
 # include <cstdlib>			// strtod, atoi, exit, EXIT_SUCCESS, EXIT_FAILURE
 # include "user.hpp"		// user class
+# include "channel.hpp"		// channel class
 # include <netinet/in.h>	// socket, send, recv, accept, htons,
 							// sockaddr_in type, SOCK_STREAM, AF_INET
 
@@ -65,12 +66,13 @@
 
 typedef struct s_serv
 {
-	int					listen_sd;
-	char				buffer[BUFFER_SIZE];
-	struct sockaddr_in	address;
-	std::vector<pollfd>	fds;
-	std::map<int, User>	users;
-	std::string			password;
+	int						listen_sd;
+	char					buffer[BUFFER_SIZE];
+	struct sockaddr_in		address;
+	std::vector<pollfd>		fds;
+	std::vector<Channel>	channels;
+	std::map<int, User>		users;
+	std::string				password;
 } t_serv;
 
 

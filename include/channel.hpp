@@ -18,14 +18,14 @@ class Channel
 
 		/********************** DATA-MEMBERS ***************************/
 
-		std::vector<std::string>	_ops;
-		std::vector<User *>			_members;
-		std::string					_name;
+		std::vector<User::mapite_t>	_ops;
+		std::vector<User::mapite_t>	_members;
+		std::string				_name;
 
 	public:
 		/********************** CONSTRUCTION ***************************/
 
-		Channel(std::string name, User *creator);
+		Channel(std::string name, User::mapite_t creator);
 
 		/********************** PUBLIC METHODS *************************/
 

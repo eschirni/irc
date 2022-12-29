@@ -230,3 +230,13 @@ void User::mode(std::string target, std::string mode) //maybe write mode rpl for
 	}
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
+
+//void User::join(std::string target, std::string key) // need to implement multiple targets & keys, 0 to leave all channels
+//{
+//	std::vector<Channel>::iterator it = this->get_channel(target);
+//
+//	if (it == this->_serv->channels.end())
+//		this->_serv->channels.push_back(Channel(target, get_user(this->_nick_name)));
+//	else //todo
+//		return ;
+//}
