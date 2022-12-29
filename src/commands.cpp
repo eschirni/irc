@@ -85,6 +85,8 @@ void User::oper(std::string nick, std::string pwd)
 			send(this->_fd, msg.c_str(), msg.length(), 0);
 			return ;
 		}
+		if (it->second._mode == 'a')
+			send(it->second._fd, RPL_UNAWAY, std::string(RPL_UNAWAY).length(), 0);
 		it->second._mode = 'o';
 		msg = RPL_YOUREOPER;
 		send(it->second._fd, msg.c_str(), msg.length(), 0);
@@ -127,7 +129,7 @@ void User::privmsg(std::string target, std::string text)
 	if (target[0] == '#') //todo
 		return ;
 	std::map<int, User>::iterator it = this->get_user(target);
-	std::string msg = ":" + this->_nick_name + " PRIVMSG " + target + " " + text + "\r\n";
+	std::string msg = ":" + this->_nick_name + " PRIVMSG " + target + " " + text + CRLF;
 
 	if (it == this->_serv->users.end())
 	{
@@ -136,7 +138,23 @@ void User::privmsg(std::string target, std::string text)
 	}
 	else if (it->second._mode == 'a')
 	{
-		msg = RPL_AWAY + it->second._nick_name + " " + it->second._away_msg + "\r\n";
+		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
+		msg = RPL_AWAY + it->second._nick_name + " " + it->second._away_msg + CRLF;
+		send(this->_fd, msg.c_str(), msg.length(), 0);
+	}
+		
+}
+
+void User::notice(std::string target, std::string text)
+{
+	if (target[0] == '#') //todo
+		return ;
+	std::map<int, User>::iterator it = this->get_user(target);
+	std::string msg = ":" + this->_nick_name + " NOTICE " + target + " " + text + CRLF;
+
+	if (it == this->_serv->users.end())
+	{
+		msg = ERR_NOSUCHNICK + target + " :User or channel not found.\r\n";
 		send(this->_fd, msg.c_str(), msg.length(), 0);
 	}
 	else
@@ -184,9 +202,10 @@ void User::away(std::string away_msg)
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
 
-void User::mode(std::string target, std::string mode) //need to fix basic confilcts with oper and away, users can only have one mode on OUR SERVER HEHE
+void User::mode(std::string target, std::string mode) //maybe write mode rpl for oper and away too so it changes in weechat
 {
 	std::string msg;
+
 	if (target[0] == '#') //todo
 		return ;
 	else
@@ -199,9 +218,9 @@ void User::mode(std::string target, std::string mode) //need to fix basic confil
 			msg = ERR_UMODEUNKNOWN + mode + " :No valid mode\r\n";
 		else
 		{
-			if (mode[0] == '+' && (mode[1] != 'o' && mode[1] != 'O'))
+			if (mode[0] == '+' && (mode[1] != 'o' && mode[1] != 'O' && this->_mode != 'a'))
 				this->_mode = mode[1];
-			else if (mode[0] == '-')
+			else if (mode[0] == '-' && this->_mode != 'a')
 				this->_mode = '0';
 			msg = RPL_UMODEIS + this->_nick_name + " " + this->_mode + CRLF;
 		}

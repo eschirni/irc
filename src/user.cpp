@@ -185,6 +185,9 @@ int	User::process_msg(void)
 		case PRIVMSG:
 			this->privmsg(arg, arg2);
 			break;
+		case NOTICE:
+			this->notice(arg, arg2);
+			break;
 		case LUSERS:
 			this->lusers();
 			break;
