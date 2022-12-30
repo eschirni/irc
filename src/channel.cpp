@@ -47,6 +47,15 @@ std::vector<User *>::iterator Channel::get_member(std::string nick)
 	return it;
 }
 
+std::vector<User *>::iterator Channel::get_op(std::string nick)
+{
+	std::vector<User *>::iterator it = this->_ops.begin();
+
+	while (it != this->_ops.end() && (*it)->getNickName() != nick)
+		++it;
+	return it;
+}
+
 void Channel::join(User *usr)
 {
 	if (this->get_member(usr->getNickName()) != this->_members.end()) //user already in channel
@@ -54,15 +63,30 @@ void Channel::join(User *usr)
 	this->_members.push_back(usr);
 	std::string msg = ":" + usr->getNickName() + " JOIN :" + this->_name + "\r\n";
 	this->send_all(msg);
+	msg = ":irc_serv.42HN.de 331 " + usr->getNickName() + " " + this->_name + " :no topic is set\r\n";
 	if (_topic != "")
-	{
-		msg = ":irc_serv.42HN.de 332 " + usr->getNickName() + " " + this->_name + " :" + this->_topic + "\r\n";
-		send(usr->getFd(), msg.c_str(), msg.size(), 0);
-	}
+		msg = ":irc_serv.42HN.de 332 " + usr->getNickName() + " " + this->_name + " " + this->_topic + "\r\n";
+	send(usr->getFd(), msg.c_str(), msg.size(), 0);
 	msg = ":irc_serv.42HN.de 353 " + usr->getNickName() + " = " + this->_name + " : " + this->get_list() + "\r\n";
 	send(usr->getFd(), msg.c_str(), msg.size(), 0);
 	msg = ":irc_serv.42HN.de 366 " + usr->getNickName() + " " + this->_name + " :End of Names list\r\n";
 	send(usr->getFd(), msg.c_str(), msg.size(), 0);
+}
+
+void Channel::topic(User *usr, std::string topic)
+{
+	std::string msg = ":irc_serv.42HN.de 331 " + usr->getNickName() + " " + this->_name + " :no topic is set\r\n";
+
+	if (this->get_op(usr->getNickName()) != this->_ops.end() && topic != "")
+	{
+		this->_topic = topic;
+		msg = ":irc_serv.42HN.de 332 " + usr->getNickName() + " " + this->_name + " " + this->_topic + "\r\n";
+	}
+	else if (topic != "" && this->get_op(usr->getNickName()) == this->_ops.end())
+		msg = ":irc_serv.42HN.de 482 " + this->_name + " :you are not an operator of this channel\r\n";
+	else if (this->_topic != "")
+		msg = ":irc_serv.42HN.de 332 " + usr->getNickName() + " " + this->_name + " " + this->_topic + "\r\n";
+	send(usr->getFd(), msg.c_str(), msg.length(), 0);
 }
 
 std::string Channel::getName(void)

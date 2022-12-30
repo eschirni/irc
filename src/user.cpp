@@ -207,6 +207,9 @@ int	User::process_msg(void)
 		case JOIN:
 			this->join(arg, arg2);
 			break;
+		case TOPIC:
+			this->topic(arg, arg2);
+			break;
 
 		/* FILE TRANSFER */
 		// trying to send the file 'file.txt' to user 'someone' via the following command in weechat:

@@ -16,6 +16,7 @@ class Channel
 
 		std::string						get_list(void);
 		std::vector<User *>::iterator	get_member(std::string nick);
+		std::vector<User *>::iterator	get_op(std::string nick);
 
 		/********************** DATA-MEMBERS ***************************/
 
@@ -31,6 +32,7 @@ class Channel
 
 		/********************** PUBLIC METHODS *************************/
 		void		join(User *usr);
+		void		topic(User *usr, std::string topic);
 		void		send_all(std::string msg, std::string self = "");
 		bool		has_member(std::string name);
 		std::string	getName(void);

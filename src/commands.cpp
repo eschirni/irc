@@ -116,7 +116,7 @@ void User::kill(std::string nick, std::string reason)
 		msg = ERR_NOSUCHNICK + nick + " :User not found.\r\n";
 	else if (this->_mode == 'o')
 	{
-		msg = ":irc_serv.42HN.de 371 You have been kicked: " + reason + "\r\n";
+		msg = ":irc_serv.42HN.de 371 You have been killed: " + reason + "\r\n";
 		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
 		msg = RPL_KILLDONE;
 		it->second.setApproved(false);
@@ -236,4 +236,17 @@ void User::join(std::string target, std::string key) // need to implement multip
 		this->_serv->channels.push_back(Channel(target, &get_user(this->_nick_name)->second));
 	else
 		it->join(&get_user(this->_nick_name)->second);
+}
+
+void User::topic(std::string target, std::string topic)
+{
+	std::vector<Channel>::iterator it = this->get_channel(target);
+	std::string msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
+
+	if (topic == target)
+		topic = "";
+	if (it == this->_serv->channels.end() || it->has_member(this->_nick_name) == false)
+		send(this->_fd, msg.c_str(), msg.length(), 0);
+	else
+		it->topic(&get_user(this->_nick_name)->second, topic);
 }

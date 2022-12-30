@@ -39,6 +39,7 @@ class User
 		void	away(std::string reply);
 		void	mode(std::string target, std::string mode);
 		void	join(std::string target, std::string key);
+		void	topic(std::string target, std::string topic);
 
 		/********************** DATA-MEMBERS ***************************/
 
