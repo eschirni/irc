@@ -225,17 +225,26 @@ void User::mode(std::string target, std::string mode) //maybe write mode rpl for
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
 
-void User::join(std::string target, std::string key) // need to implement multiple targets & keys, 0 to leave all channels
+void User::join(std::string target) // need to implement multiple targets & keys, 0 to leave all channels
 {
-	std::vector<Channel>::iterator it = this->get_channel(target);
-	std::string msg = ERR_BADCHANMASK + target + " :Channel names have to start with #\r\n";
+	std::vector<std::string>			target_split = split(target, ',');
+	std::vector<std::string>::iterator	it = target_split.begin();
+	std::vector<Channel>::iterator		channel;
+	std::string 						msg;
 
-	if (target[0] != '#')
-		send(this->_fd, msg.c_str(), msg.length(), 0);
-	else if (it == this->_serv->channels.end())
-		this->_serv->channels.push_back(Channel(target, &get_user(this->_nick_name)->second));
-	else
-		it->join(&get_user(this->_nick_name)->second);
+	while (it != target_split.end())
+	{
+		channel = this->get_channel(*it);
+		msg = ERR_BADCHANMASK + *it + " :Channel names have to start wchannelh #\r\n";
+
+		if (it[0][0] != '#')
+			send(this->_fd, msg.c_str(), msg.length(), 0);
+		else if (channel == this->_serv->channels.end())
+			this->_serv->channels.push_back(Channel(*it, &get_user(this->_nick_name)->second));
+		else
+			channel->join(&get_user(this->_nick_name)->second);
+		++it;
+	}
 }
 
 void User::topic(std::string target, std::string topic)

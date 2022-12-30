@@ -38,6 +38,7 @@
 # define NEWLINE()		std::cout << std::endl
 # define NPOS			std::string::npos
 # define CRLF			"\r\n"
+# define BEGIN			0
 
 
 /***************************** IRC-NUMERICS ************************************/
@@ -109,21 +110,22 @@ enum e_commands
 /************************** FUNCTION-PROTOTYPES ********************************/
 
 /* init.cpp */
-int		initialization(t_serv* serv, char** argv);
+int							initialization(t_serv* serv, char** argv);
 
 /* loop.cpp */
-int		irc_loop(t_serv* serv);
+int							irc_loop(t_serv* serv);
 
 /* utils.cpp */
-int		error(int errno_code);
-int		error(const char* error_msg);
-void	ft_exit(int exit_code);
-bool	is_ewouldblock(int errno_code);
-void	compress_array(t_serv* serv);
-int		erase_element(t_serv* serv, size_t index);
-int		info(const char* info_msg); //debug
-void	print_str_with_crlf(const char* s, bool print_nonprint = false); //debug
-void	remove_line(std::string& string, int iterations = 1);
+int							error(int errno_code);
+int							error(const char* error_msg);
+void						ft_exit(int exit_code);
+bool						is_ewouldblock(int errno_code);
+void						compress_array(t_serv* serv);
+int							erase_element(t_serv* serv, size_t index);
+int							info(const char* info_msg); //debug
+void						print_str_with_crlf(const char* s, bool print_nonprint = false); //debug
+void						remove_line(std::string& string, int iterations = 1);
+std::vector<std::string>	split(std::string string, char delimiter);
 
 
 /**************************** ERROR-MESSAGES ***********************************/
