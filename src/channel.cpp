@@ -41,3 +41,10 @@ std::string Channel::getName(void)
 {
 	return this->_name;
 }
+
+bool Channel::has_member(std::string name)
+{
+	if (this->get_member(name) == this->_members.end())
+		return false;
+	return true;
+}

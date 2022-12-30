@@ -193,7 +193,7 @@ int	User::process_msg(void)
 			this->privmsg(arg, arg2);
 			break;
 		case NOTICE:
-			this->notice(arg, arg2);
+			this->privmsg(arg, arg2, true);
 			break;
 		case LUSERS:
 			this->lusers();

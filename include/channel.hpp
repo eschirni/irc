@@ -30,8 +30,9 @@ class Channel
 
 		/********************** PUBLIC METHODS *************************/
 		void		join(User *usr);
-		std::string	getName(void);
 		void		send_all(std::string msg, std::string self = "");
+		bool		has_member(std::string name);
+		std::string	getName(void);
 
 };
 

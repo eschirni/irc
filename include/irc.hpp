@@ -53,6 +53,7 @@
 # define RPL_KILLDONE		":irc_serv.42HN.de 361 User was kicked\r\n"
 # define RPL_YOUREOPER		":irc_serv.42HN.de 381 You are oper\r\n"
 # define ERR_NOSUCHNICK		":irc_serv.42HN.de 401 "
+# define ERR_CANNOTSENDTOCH	":irc_serv.42HN.de 404 "
 # define ERR_PASSWDMISMATCH	":irc_serv.42HN.de 464 Password incorrect.\r\n"
 # define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 "
 # define ERR_NICKNAMEINUSE	":irc_serv.42HN.de 433 "

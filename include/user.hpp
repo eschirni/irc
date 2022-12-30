@@ -34,8 +34,7 @@ class User
 		void	nick(const std::string nick);
 		void	ping(std::string msg);
 		void	kill(std::string nick, std::string reason);
-		void	privmsg(std::string target, std::string text);
-		void	notice(std::string target, std::string text);
+		void	privmsg(std::string target, std::string text, bool notice = false);
 		void	lusers(void);
 		void	away(std::string reply);
 		void	mode(std::string target, std::string mode);

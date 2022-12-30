@@ -124,14 +124,22 @@ void User::kill(std::string nick, std::string reason)
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
 
-void User::privmsg(std::string target, std::string text)
+void User::privmsg(std::string target, std::string text, bool notice)
 {
 	std::string msg = ":" + this->_nick_name + " PRIVMSG " + target + " " + text + CRLF;
+	if (notice == true)
+		msg = ":" + this->_nick_name + " NOTICE " + target + " " + text + CRLF;
 
-	if (target[0] == '#') //channels need to check if in channel, if channel exists
+	if (target[0] == '#')
 	{
 		std::vector<Channel>::iterator it = this->get_channel(target);
-		it->send_all(msg, this->_nick_name);
+		if (it == this->_serv->channels.end() || it->has_member(this->_nick_name) == false)
+		{
+			msg = ERR_CANNOTSENDTOCH + target + " :You are not member of a channel with this name\r\n";
+			send(this->_fd, msg.c_str(), msg.length(), 0);
+		}
+		else
+			it->send_all(msg, this->_nick_name);
 	}
 	else //users
 	{
@@ -144,7 +152,7 @@ void User::privmsg(std::string target, std::string text)
 		else
 		{
 			send(it->second.getFd(), msg.c_str(), msg.length(), 0);
-			if (it->second._mode == 'a')
+			if (notice == false && it->second._mode == 'a')
 			{
 				msg = RPL_AWAY + it->second._nick_name + " " + it->second._away_msg + CRLF;
 				send(this->_fd, msg.c_str(), msg.length(), 0);
@@ -153,44 +161,25 @@ void User::privmsg(std::string target, std::string text)
 	}	
 }
 
-void User::notice(std::string target, std::string text)
-{
-	if (target[0] == '#') //todo
-		return ;
-	std::map<int, User>::iterator it = this->get_user(target);
-	std::string msg = ":" + this->_nick_name + " NOTICE " + target + " " + text + CRLF;
-
-	if (it == this->_serv->users.end())
-	{
-		msg = ERR_NOSUCHNICK + target + " :User or channel not found.\r\n";
-		send(this->_fd, msg.c_str(), msg.length(), 0);
-	}
-	else
-		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
-}
-
 void User::lusers(void)
 {
-	int users = 0;
 	int invisible = 0;
 	int ops = 0;
-	int channels = 0; //todo
 
 	mapite_t it = this->_serv->users.begin();
 	while (it != this->_serv->users.end())
 	{
-		++users;
 		if (it->second._mode == 'o')
 			++ops;
 		else if (it->second._mode == 'i')
 			++invisible;
 		++it;
 	}
-	std::string msg = ":irc_serv.42HN.de 251 :There are " + NumberToString(users) + " users and " + NumberToString(invisible) + " invisible users on 1 server\r\n";
+	std::string msg = ":irc_serv.42HN.de 251 :There are " + NumberToString(this->_serv->users.size()) + " users and " + NumberToString(invisible) + " invisible users on 1 server\r\n";
 	msg.append(":irc_serv.42HN.de 252 " + NumberToString(ops) + " :Operators on the server\r\n");
 	msg.append(RPL_LUSERUNKNOWN);
-	msg.append(":irc_serv.42HN.de 254 " + NumberToString(channels) + " :Channels on the server\r\n");
-	msg.append(":irc_serv.42HN.de 255 :I have " + NumberToString(users) + " clients and 1 server\r\n");
+	msg.append(":irc_serv.42HN.de 254 " + NumberToString(this->_serv->channels.size()) + " :Channels on the server\r\n");
+	msg.append(":irc_serv.42HN.de 255 :I have " + NumberToString(this->_serv->users.size()) + " clients and 1 server\r\n");
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
 
