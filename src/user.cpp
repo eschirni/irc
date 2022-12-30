@@ -215,7 +215,7 @@ int	User::process_msg(void)
 		// "PRIVMSG someone :DCC SEND file.txt 2886860548 37009 0"
 	
 		default:
-			send_msg = ERR_UNKNOWNCOMMAND + arg + " :Unknown command\r\n";
+			send_msg = ERR_UNKNOWNCOMMAND + this->_client_msg.substr(0, this->_client_msg.find(' ')).substr(0, this->_client_msg.find('\r')) + " :Unknown command\r\n";
 			send(_fd, send_msg.c_str(), send_msg.length(), 0);
 			break;
 	}

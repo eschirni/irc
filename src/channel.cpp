@@ -1,10 +1,29 @@
 #include "../include/channel.hpp"
 #include <netinet/in.h>
 
-Channel::Channel(std::string name, User *creator): _name(name)
+Channel::Channel(std::string name, User *creator): _name(name), _topic("")
 {
 	this->_ops.push_back(creator);
 	this->join(creator);
+}
+
+std::string Channel::get_list(void)
+{
+	std::string ret = "";
+	std::vector<User *>::iterator mem = this->_members.begin();
+	std::vector<User *>::iterator ops = this->_ops.begin();
+
+	while (mem != this->_members.end())
+	{
+		ret += (*mem)->getNickName() + " ";
+		++mem;
+	}
+	while (ops != this->_ops.end())
+	{
+		ret += "@" + (*ops)->getNickName() + " ";
+		++ops;
+	}
+	return ret;
 }
 
 void Channel::send_all(std::string msg, std::string self)
@@ -35,6 +54,15 @@ void Channel::join(User *usr)
 	this->_members.push_back(usr);
 	std::string msg = ":" + usr->getNickName() + " JOIN :" + this->_name + "\r\n";
 	this->send_all(msg);
+	if (_topic != "")
+	{
+		msg = ":irc_serv.42HN.de 332 " + usr->getNickName() + " " + this->_name + " :" + this->_topic + "\r\n";
+		send(usr->getFd(), msg.c_str(), msg.size(), 0);
+	}
+	msg = ":irc_serv.42HN.de 353 " + usr->getNickName() + " = " + this->_name + " : " + this->get_list() + "\r\n";
+	send(usr->getFd(), msg.c_str(), msg.size(), 0);
+	msg = ":irc_serv.42HN.de 366 " + usr->getNickName() + " " + this->_name + " :End of Names list\r\n";
+	send(usr->getFd(), msg.c_str(), msg.size(), 0);
 }
 
 std::string Channel::getName(void)

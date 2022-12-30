@@ -14,6 +14,7 @@ class Channel
 	private:
 		/********************** PIRVATE METHODS ************************/
 
+		std::string						get_list(void);
 		std::vector<User *>::iterator	get_member(std::string nick);
 
 		/********************** DATA-MEMBERS ***************************/
