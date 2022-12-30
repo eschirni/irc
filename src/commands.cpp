@@ -232,11 +232,13 @@ void User::join(std::string target) // need to implement multiple targets & keys
 	std::vector<Channel>::iterator		channel;
 	std::string 						msg;
 
+	std::cout << target.length() << std::endl;
+	if (target[0] == '0' && target.length() == 1)
+		return part("*", "");
 	while (it != target_split.end())
 	{
 		channel = this->get_channel(*it);
 		msg = ERR_BADCHANMASK + *it + " :Channel names have to start with #\r\n";
-
 		if (it[0][0] != '#')
 			send(this->_fd, msg.c_str(), msg.length(), 0);
 		else if (channel == this->_serv->channels.end())
@@ -269,11 +271,34 @@ void User::names(std::string target)
 
 void User::part(std::string target, std::string leave_msg) //need to allow multiple channels
 {
-	std::vector<Channel>::iterator it = this->get_channel(target);
-	std::string msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
+	std::vector<std::string>			target_split = split(target, ',');
+	std::vector<std::string>::iterator	it = target_split.begin();
+	std::vector<Channel>::iterator		channel;
+	std::string 						msg;
 
-	if (it != this->_serv->channels.end() && it->has_member(this->_nick_name) == true)
-		it->part(&get_user(this->_nick_name)->second, leave_msg);
-	else
-		send(this->_fd, msg.c_str(), msg.length(), 0);
+	std::cout << leave_msg.length() << std::endl;
+	std::cout << leave_msg[0] << std::endl;
+	if (leave_msg[1] == '*')
+	{
+		if (leave_msg.length() >= 3)
+			leave_msg.erase(BEGIN, 3);
+		else
+			leave_msg = "Waiting for something to happen?";
+		for (std::vector<Channel>::iterator it = _serv->channels.begin(); it != _serv->channels.end(); ++it)
+		{
+			if (it->has_member(_nick_name) == true)
+				it->part(this, leave_msg);
+		}
+		return;
+	}
+	while (it != target_split.end())
+	{
+		channel = this->get_channel(*it);
+		msg = ":irc_serv.42HN.de 442 " + *it + " :not on channel\r\n";
+		if (channel != this->_serv->channels.end() && channel->has_member(this->_nick_name) == true)
+			channel->part(&get_user(this->_nick_name)->second, leave_msg);
+		else
+			send(this->_fd, msg.c_str(), msg.length(), 0);
+		++it;
+	}
 }
