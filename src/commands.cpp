@@ -126,26 +126,31 @@ void User::kill(std::string nick, std::string reason)
 
 void User::privmsg(std::string target, std::string text)
 {
-	if (target[0] == '#') //todo
-		return ;
-	std::map<int, User>::iterator it = this->get_user(target);
 	std::string msg = ":" + this->_nick_name + " PRIVMSG " + target + " " + text + CRLF;
 
-	if (it == this->_serv->users.end())
+	if (target[0] == '#') //channels need to check if in channel, if channel exists
 	{
-		msg = ERR_NOSUCHNICK + target + " :User or channel not found.\r\n";
-		send(this->_fd, msg.c_str(), msg.length(), 0);
+		std::vector<Channel>::iterator it = this->get_channel(target);
+		it->send_all(msg, this->_nick_name);
 	}
-	else
+	else //users
 	{
-		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
-		if (it->second._mode == 'a')
+		std::map<int, User>::iterator it = this->get_user(target);
+		if (it == this->_serv->users.end())
 		{
-			msg = RPL_AWAY + it->second._nick_name + " " + it->second._away_msg + CRLF;
+			msg = ERR_NOSUCHNICK + target + " :User not found.\r\n";
 			send(this->_fd, msg.c_str(), msg.length(), 0);
 		}
-	}
-		
+		else
+		{
+			send(it->second.getFd(), msg.c_str(), msg.length(), 0);
+			if (it->second._mode == 'a')
+			{
+				msg = RPL_AWAY + it->second._nick_name + " " + it->second._away_msg + CRLF;
+				send(this->_fd, msg.c_str(), msg.length(), 0);
+			}
+		}
+	}	
 }
 
 void User::notice(std::string target, std::string text)
@@ -231,12 +236,15 @@ void User::mode(std::string target, std::string mode) //maybe write mode rpl for
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
 
-//void User::join(std::string target, std::string key) // need to implement multiple targets & keys, 0 to leave all channels
-//{
-//	std::vector<Channel>::iterator it = this->get_channel(target);
-//
-//	if (it == this->_serv->channels.end())
-//		this->_serv->channels.push_back(Channel(target, get_user(this->_nick_name)));
-//	else //todo
-//		return ;
-//}
+void User::join(std::string target, std::string key) // need to implement multiple targets & keys, 0 to leave all channels
+{
+	std::vector<Channel>::iterator it = this->get_channel(target);
+	std::string msg = ERR_BADCHANMASK + target + " :Channel names have to start with #\r\n";
+
+	if (target[0] != '#')
+		send(this->_fd, msg.c_str(), msg.length(), 0);
+	else if (it == this->_serv->channels.end())
+		this->_serv->channels.push_back(Channel(target, &get_user(this->_nick_name)->second));
+	else
+		it->join(&get_user(this->_nick_name)->second);
+}

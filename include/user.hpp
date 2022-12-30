@@ -5,13 +5,15 @@
 
 # include <string>
 # include <map>
+# include <vector>
 
-
+class Channel;
 /******************************* USER-CLASS ************************************/
 
 typedef struct s_serv t_serv;
 class User
 {
+	typedef typename std::map<int, User>::iterator mapite_t;
 	private:
 		/********************** PIRVATE METHODS ************************/
 
@@ -21,7 +23,8 @@ class User
 		int			process_handshake(void);
 		int			send_welcome_reply(void);
 		int			get_current_command(void);
-		//std::vector<Channel>::iterator	get_channel(const std::string name);
+		mapite_t	get_user(std::string nick);
+		std::vector<Channel>::iterator	get_channel(const std::string name);
 
 
 		/************************ COMMANDS *****************************/
@@ -52,7 +55,6 @@ class User
 		std::string	_away_msg;
 
 	public:
-		typedef typename std::map<int, User>::iterator mapite_t;
 		/********************** CONSTRUCTION ***************************/
 
 		User(int fd, t_serv *serv);
@@ -68,8 +70,6 @@ class User
 		int			getFd(void) const;
 		void		setApproved(bool approval);
 		int			process_msg(void);
-
-		mapite_t	get_user(std::string nick);
 };
 
 

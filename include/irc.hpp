@@ -57,6 +57,7 @@
 # define ERR_UNKNOWNCOMMAND	":irc_serv.42HN.de 421 "
 # define ERR_NICKNAMEINUSE	":irc_serv.42HN.de 433 "
 # define ERR_NEEDMOREPARAMS	":irc_serv.42HN.de 461 MODE :No mode specified\r\n"
+# define ERR_BADCHANMASK	":irc_serv.42HN.de 476 "
 # define ERR_NOPRIVILEGES	":irc_serv.42HN.de 481 " + _nick_name + " :Not an oper\r\n"
 # define ERR_UMODEUNKNOWN	":irc_serv.42HN.de 501 "
 # define ERR_USERSDONTMATCH	":irc_serv.42HN.de 502 "

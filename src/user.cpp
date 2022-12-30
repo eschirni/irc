@@ -44,7 +44,6 @@ bool	User::check_nickname(std::string nick)
 
 std::map<int, User>::iterator	User::get_user(const std::string nick)
 {
-	std::string msg;
 	std::map<int, User>::iterator it = this->_serv->users.begin();
 
 	while (it != this->_serv->users.end() && it->second.getNickName() != nick)
@@ -52,15 +51,15 @@ std::map<int, User>::iterator	User::get_user(const std::string nick)
 	return it;
 }
 
-//std::vector<Channel>::iterator	User::get_channel(const std::string name)
-//{
-//	std::string msg;
-//	std::vektor<Channel>::iterator it = this->_serv->channels.begin();
+std::vector<Channel>::iterator	User::get_channel(const std::string name)
+{
+	std::string msg;
+	std::vector<Channel>::iterator it = this->_serv->channels.begin();
 
-//	while (it != this->_serv->channels.end() && it->second.getName() != name)
-//		++it;
-//	return it;
-//}
+	while (it != this->_serv->channels.end() && it->getName() != name)
+		++it;
+	return it;
+}
 
 void User::send_all(std::string msg)
 {
@@ -204,6 +203,9 @@ int	User::process_msg(void)
 			break;
 		case MODE:
 			this->mode(arg, arg2);
+			break;
+		case JOIN:
+			this->join(arg, arg2);
 			break;
 
 		/* FILE TRANSFER */
