@@ -232,9 +232,8 @@ void User::join(std::string target) // need to implement multiple targets & keys
 	std::vector<Channel>::iterator		channel;
 	std::string 						msg;
 
-	std::cout << target.length() << std::endl;
 	if (target[0] == '0' && target.length() == 1)
-		return part("*", "");
+		return part("", ":*");
 	while (it != target_split.end())
 	{
 		channel = this->get_channel(*it);
@@ -276,8 +275,6 @@ void User::part(std::string target, std::string leave_msg) //need to allow multi
 	std::vector<Channel>::iterator		channel;
 	std::string 						msg;
 
-	std::cout << leave_msg.length() << std::endl;
-	std::cout << leave_msg[0] << std::endl;
 	if (leave_msg[1] == '*')
 	{
 		if (leave_msg.length() >= 3)
