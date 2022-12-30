@@ -225,7 +225,7 @@ void User::mode(std::string target, std::string mode) //maybe write mode rpl for
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
 
-void User::join(std::string target) // need to implement multiple targets & keys, 0 to leave all channels
+void User::join(std::string target)
 {
 	std::vector<std::string>			target_split = split(target, ',');
 	std::vector<std::string>::iterator	it = target_split.begin();
@@ -268,7 +268,7 @@ void User::names(std::string target)
 		it->names(&get_user(this->_nick_name)->second);
 }
 
-void User::part(std::string target, std::string leave_msg) //need to allow multiple channels
+void User::part(std::string target, std::string leave_msg)
 {
 	std::vector<std::string>			target_split = split(target, ',');
 	std::vector<std::string>::iterator	it = target_split.begin();
@@ -280,7 +280,7 @@ void User::part(std::string target, std::string leave_msg) //need to allow multi
 		if (leave_msg.length() >= 3)
 			leave_msg.erase(BEGIN, 3);
 		else
-			leave_msg = "Waiting for something to happen?";
+			leave_msg = PART_ALL_MSG;
 		for (std::vector<Channel>::iterator it = _serv->channels.begin(); it != _serv->channels.end(); ++it)
 		{
 			if (it->has_member(_nick_name) == true)

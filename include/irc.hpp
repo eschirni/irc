@@ -30,6 +30,7 @@
 # define PASSW_MIN_LEN	8
 # define PASSW_MAX_LEN	1024
 # define OPER_PASSW		"teapot"
+# define PART_ALL_MSG	"Waiting for something to happen?"
 
 
 /***************************** MISC-DEFINES ************************************/
