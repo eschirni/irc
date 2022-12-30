@@ -7,7 +7,7 @@ Channel::Channel(std::string name, User *creator): _name(name), _topic("")
 	this->join(creator);
 }
 
-std::string Channel::get_list(void)
+void Channel::print_list(User *usr)
 {
 	std::string ret = "";
 	std::vector<User *>::iterator mem = this->_members.begin();
@@ -23,7 +23,10 @@ std::string Channel::get_list(void)
 		ret += "@" + (*ops)->getNickName() + " ";
 		++ops;
 	}
-	return ret;
+	std::string msg = ":irc_serv.42HN.de 353 " + usr->getNickName() + " = " + this->_name + " : " + ret + "\r\n";
+	send(usr->getFd(), msg.c_str(), msg.size(), 0);
+	msg = ":irc_serv.42HN.de 366 " + usr->getNickName() + " " + this->_name + " :End of Names list\r\n";
+	send(usr->getFd(), msg.c_str(), msg.size(), 0);
 }
 
 void Channel::send_all(std::string msg, std::string self)
@@ -67,10 +70,7 @@ void Channel::join(User *usr)
 	if (_topic != "")
 		msg = ":irc_serv.42HN.de 332 " + usr->getNickName() + " " + this->_name + " " + this->_topic + "\r\n";
 	send(usr->getFd(), msg.c_str(), msg.size(), 0);
-	msg = ":irc_serv.42HN.de 353 " + usr->getNickName() + " = " + this->_name + " : " + this->get_list() + "\r\n";
-	send(usr->getFd(), msg.c_str(), msg.size(), 0);
-	msg = ":irc_serv.42HN.de 366 " + usr->getNickName() + " " + this->_name + " :End of Names list\r\n";
-	send(usr->getFd(), msg.c_str(), msg.size(), 0);
+	this->print_list(usr);
 }
 
 void Channel::topic(User *usr, std::string topic)
@@ -91,10 +91,7 @@ void Channel::topic(User *usr, std::string topic)
 
 void Channel::names(User *usr)
 {
-	std::string msg = ":irc_serv.42HN.de 353 " + usr->getNickName() + " = " + this->_name + " : " + this->get_list() + "\r\n";
-	send(usr->getFd(), msg.c_str(), msg.size(), 0);
-	msg = ":irc_serv.42HN.de 366 " + usr->getNickName() + " " + this->_name + " :End of Names list\r\n";
-	send(usr->getFd(), msg.c_str(), msg.size(), 0);
+	this->print_list(usr);
 }
 
 std::string Channel::getName(void)
