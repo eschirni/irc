@@ -148,29 +148,42 @@ int	User::initiate_handshake(std::string msg)
 	return EXIT_FAILURE;
 }
 
-
-/***************************** PUBLIC METHODS **********************************/
-
-int	User::process_msg(void)
+std::vector<std::string>	User::get_command_arguments(void)
 {
-	int			current_command;
-	std::string send_msg;
+	std::vector<std::string>	argv;
 
-	_client_msg.append(this->_serv->buffer);
-	if (_first_msg == true && initiate_handshake(this->_client_msg) == EXIT_FAILURE)
-		return EXIT_FAILURE;
-	if (_client_msg.empty())
-		return EXIT_SUCCESS;
-	current_command = get_current_command();
 	int pos = this->_client_msg.find(' ');
-	std::string arg = this->_client_msg.substr(pos + 1, std::string::npos);
+	std::string arg = this->_client_msg.substr(pos + 1, NPOS);
 	int pos2 = arg.find(' ');
-	std::string arg2 = arg.substr(pos2 + 1, std::string::npos);
+	std::string arg2 = arg.substr(pos2 + 1, NPOS);
 	arg = this->_client_msg.substr(pos + 1, pos2);
 	pos = arg.find('\r');
 	arg = arg.substr(0, pos);
 	pos = arg2.find('\r');
 	arg2 = arg2.substr(0, pos);
+	argv.push_back(arg);
+	argv.push_back(arg2);
+	return argv;
+}
+
+
+/***************************** PUBLIC METHODS **********************************/
+
+int	User::process_msg(void)
+{
+	int							current_command;
+	std::vector<std::string>	argv;
+	std::string					send_msg;
+
+	_client_msg.append(this->_serv->buffer);
+	if (_client_msg.find(CRLF) == NPOS)
+		return EXIT_FAILURE;
+	if (_first_msg == true && initiate_handshake(this->_client_msg) == EXIT_FAILURE)
+		return EXIT_FAILURE;
+	if (_client_msg.empty())
+		return EXIT_SUCCESS;
+	current_command = get_current_command();
+	argv = get_command_arguments();
 	std::cout << this->_client_msg; //debug
 	switch (current_command)
 	{
@@ -178,43 +191,43 @@ int	User::process_msg(void)
 			this->info();
 			break;
 		case OPER:
-			this->oper(arg, arg2);
+			this->oper(argv[0], argv[1]);
 			break;
 		case NICK:
-			this->nick(arg);
+			this->nick(argv[0]);
 			break;
 		case PING:
-			this->ping(arg);
+			this->ping(argv[0]);
 			break;
 		case KILL:
-			this->kill(arg, arg2);
+			this->kill(argv[0], argv[1]);
 			break;
 		case PRIVMSG:
-			this->privmsg(arg, arg2);
+			this->privmsg(argv[0], argv[1]);
 			break;
 		case NOTICE:
-			this->privmsg(arg, arg2, true);
+			this->privmsg(argv[0], argv[1], true);
 			break;
 		case LUSERS:
 			this->lusers();
 			break;
 		case AWAY:
-			this->away(arg);
+			this->away(argv[0]);
 			break;
 		case MODE:
-			this->mode(arg, arg2);
+			this->mode(argv[0], argv[1]);
 			break;
 		case JOIN:
-			this->join(arg, arg2);
+			this->join(argv[0], argv[1]);
 			break;
 		case TOPIC:
-			this->topic(arg, arg2);
+			this->topic(argv[0], argv[1]);
 			break;
 		case NAMES:
-			this->names(arg);
+			this->names(argv[0]);
 			break;
 		case PART:
-			this->part(arg, arg2);
+			this->part(argv[0], argv[1]);
 			break;
 
 		/* FILE TRANSFER */
