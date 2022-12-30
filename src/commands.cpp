@@ -235,7 +235,7 @@ void User::join(std::string target) // need to implement multiple targets & keys
 	while (it != target_split.end())
 	{
 		channel = this->get_channel(*it);
-		msg = ERR_BADCHANMASK + *it + " :Channel names have to start wchannelh #\r\n";
+		msg = ERR_BADCHANMASK + *it + " :Channel names have to start with #\r\n";
 
 		if (it[0][0] != '#')
 			send(this->_fd, msg.c_str(), msg.length(), 0);
