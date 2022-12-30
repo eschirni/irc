@@ -89,6 +89,14 @@ void Channel::topic(User *usr, std::string topic)
 	send(usr->getFd(), msg.c_str(), msg.length(), 0);
 }
 
+void Channel::names(User *usr)
+{
+	std::string msg = ":irc_serv.42HN.de 353 " + usr->getNickName() + " = " + this->_name + " : " + this->get_list() + "\r\n";
+	send(usr->getFd(), msg.c_str(), msg.size(), 0);
+	msg = ":irc_serv.42HN.de 366 " + usr->getNickName() + " " + this->_name + " :End of Names list\r\n";
+	send(usr->getFd(), msg.c_str(), msg.size(), 0);
+}
+
 std::string Channel::getName(void)
 {
 	return this->_name;

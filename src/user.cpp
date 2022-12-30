@@ -210,6 +210,9 @@ int	User::process_msg(void)
 		case TOPIC:
 			this->topic(arg, arg2);
 			break;
+		case NAMES:
+			this->names(arg);
+			break;
 
 		/* FILE TRANSFER */
 		// trying to send the file 'file.txt' to user 'someone' via the following command in weechat:

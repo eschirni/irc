@@ -250,3 +250,10 @@ void User::topic(std::string target, std::string topic)
 	else
 		it->topic(&get_user(this->_nick_name)->second, topic);
 }
+
+void User::names(std::string target)
+{
+	std::vector<Channel>::iterator it = this->get_channel(target);
+	if (it != this->_serv->channels.end())
+		it->names(&get_user(this->_nick_name)->second);
+}

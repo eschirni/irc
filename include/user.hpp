@@ -40,6 +40,7 @@ class User
 		void	mode(std::string target, std::string mode);
 		void	join(std::string target, std::string key);
 		void	topic(std::string target, std::string topic);
+		void	names(std::string target);
 
 		/********************** DATA-MEMBERS ***************************/
 
