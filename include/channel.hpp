@@ -34,6 +34,7 @@ class Channel
 		void		join(User *usr);
 		void		topic(User *usr, std::string topic);
 		void		names(User *usr);
+		void		part(User *usr, std::string leave_msg);
 		void		send_all(std::string msg, std::string self = "");
 		bool		has_member(std::string name);
 		std::string	getName(void);

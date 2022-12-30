@@ -257,3 +257,14 @@ void User::names(std::string target)
 	if (it != this->_serv->channels.end())
 		it->names(&get_user(this->_nick_name)->second);
 }
+
+void User::part(std::string target, std::string leave_msg) //need to allow multiple channels
+{
+	std::vector<Channel>::iterator it = this->get_channel(target);
+	std::string msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
+
+	if (it != this->_serv->channels.end() && it->has_member(this->_nick_name) == true)
+		it->part(&get_user(this->_nick_name)->second, leave_msg);
+	else
+		send(this->_fd, msg.c_str(), msg.length(), 0);
+}

@@ -1,5 +1,6 @@
 #include "../include/channel.hpp"
 #include <netinet/in.h>
+#include <iostream> //debug
 
 Channel::Channel(std::string name, User *creator): _name(name), _topic("")
 {
@@ -92,6 +93,13 @@ void Channel::topic(User *usr, std::string topic)
 void Channel::names(User *usr)
 {
 	this->print_list(usr);
+}
+
+void Channel::part(User *usr, std::string leave_msg) //check if user is op and if so remove from _ops
+{
+	std::string reply = ":" + usr->getNickName() + " PART " + this->_name + " " + leave_msg + "\r\n";
+	this->send_all(reply);
+	this->_members.erase(this->get_member(usr->getNickName()));
 }
 
 std::string Channel::getName(void)
