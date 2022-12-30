@@ -74,7 +74,7 @@ void User::oper(std::string nick, std::string pwd)
 {
 	std::string msg = RPL_BADCHANPASS;
 
-	if (pwd != "teapot")
+	if (pwd != OPER_PASSW)
 		send(this->_fd, msg.c_str(), msg.length(), 0);
 	else
 	{

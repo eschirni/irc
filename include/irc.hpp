@@ -29,6 +29,7 @@
 # define PORT_MAX		65535
 # define PASSW_MIN_LEN	8
 # define PASSW_MAX_LEN	1024
+# define OPER_PASSW		"teapot"
 
 
 /***************************** MISC-DEFINES ************************************/
