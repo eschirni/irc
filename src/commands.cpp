@@ -133,6 +133,9 @@ void User::privmsg(std::string target, std::string text, bool notice)
 
 	if (target[0] == '#')
 	{
+		//if (target == "#support" && text.back() == '?') {
+		//
+		//}
 		std::vector<Channel>::iterator it = this->get_channel(target);
 		if (it == this->_serv->channels.end() || it->has_member(this->_nick_name) == false)
 		{
@@ -312,7 +315,7 @@ void User::part(std::string target, std::string leave_msg)
 void	User::quit(std::string leave_msg)
 {
 	std::cout << "quit leave msg\t" << leave_msg << std::endl;
-	if (leave_msg.empty())
+	if (leave_msg.compare(":WeeChat") == 0)
 		part("", ":* user disconnected");
 	else 
 		part("", ":* " + leave_msg);
