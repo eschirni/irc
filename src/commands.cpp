@@ -204,7 +204,7 @@ void User::lusers(void)
 	int invisible = 0;
 	int ops = 0;
 
-	mapite_t it = this->_serv->users.begin();
+	std::map<int, User>::iterator it = this->_serv->users.begin();
 	while (it != this->_serv->users.end())
 	{
 		if (it->second._mode == 'o')
@@ -368,7 +368,7 @@ void User::kick(std::string target, std::string params)
 void User::invite(std::string name, std::string target)
 {
 	std::vector<Channel>::iterator it = this->get_channel(target);
-	mapite_t usr = this->get_user(name);
+	std::map<int, User>::iterator usr = this->get_user(name);
 	std::string msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
 
 	if (usr == this->_serv->users.end())
