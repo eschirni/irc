@@ -133,9 +133,6 @@ void User::privmsg(std::string target, std::string text, bool notice)
 
 	if (target[0] == '#')
 	{
-		//if (target == "#support" && text.back() == '?') {
-		//
-		//}
 		std::vector<Channel>::iterator it = this->get_channel(target);
 		if (it == this->_serv->channels.end() || it->has_member(this->_nick_name) == false)
 		{
@@ -143,7 +140,14 @@ void User::privmsg(std::string target, std::string text, bool notice)
 			send(this->_fd, msg.c_str(), msg.length(), 0);
 		}
 		else
+		{
 			it->send_all(msg, this->_nick_name);
+			if (it->getName() == "#Support" && text.find_last_of('?') == text.length() - 1)
+			{
+				msg = ":@42-Pascal PRIVMSG #Support Ask your peers!\r\n";
+				it->send_all(msg);
+			}
+		}
 	}
 	else //users
 	{
