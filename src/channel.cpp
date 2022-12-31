@@ -141,6 +141,21 @@ void Channel::op(User *usr, std::string mode, std::string name)
 	send(usr->getFd(), msg.c_str(), msg.length(), 0);
 }
 
+void Channel::kick(User *usr, std::string name, std::string kick_msg)
+{
+	std::string msg = ":" + usr->getNickName() + " KICK " + this->_name + " " + name + " " + kick_msg + "\r\n";
+	std::vector<User *>::iterator it = this->get_member(name);
+
+	if (this->get_op(usr->getNickName()) == this->_ops.end())
+		msg = ":irc_serv.42HN.de 482 " + this->_name + " :you are not an operator of this channel\r\n";
+	else if (it == this->_members.end())
+		msg = ":irc_serv.42HN.de 442 " + this->_name + " :" + name + " not on channel\r\n";
+	if (this->get_op(usr->getNickName()) == this->_ops.end() || it == this->_members.end())
+		send(usr->getFd(), msg.c_str(), msg.length(), 0);
+	else
+		send_all(msg);
+}
+
 std::string Channel::getName(void)
 {
 	return this->_name;

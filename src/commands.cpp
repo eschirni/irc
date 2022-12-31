@@ -276,3 +276,14 @@ void User::part(std::string target, std::string leave_msg) //need to allow multi
 	else
 		send(this->_fd, msg.c_str(), msg.length(), 0);
 }
+
+void User::kick(std::string target, std::string params)
+{
+	std::vector<Channel>::iterator it = this->get_channel(target);
+	std::string msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
+
+	if (it != this->_serv->channels.end() && it->has_member(this->_nick_name) == true)
+		it->kick(&get_user(this->_nick_name)->second, params.substr(0, params.find(' ')), params.substr(params.find(' ') + 1, NPOS));
+	else
+		send(this->_fd, msg.c_str(), msg.length(), 0);
+}
