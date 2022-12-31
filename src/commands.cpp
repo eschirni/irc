@@ -116,6 +116,7 @@ void User::kill(std::string nick, std::string reason)
 		msg = ERR_NOSUCHNICK + nick + " :User not found.\r\n";
 	else if (this->_mode == 'o')
 	{
+		it->second.part("", ":* user has been killed");
 		msg = ":irc_serv.42HN.de 371 You have been killed: " + reason + "\r\n";
 		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
 		msg = RPL_KILLDONE;
@@ -132,6 +133,9 @@ void User::privmsg(std::string target, std::string text, bool notice)
 
 	if (target[0] == '#')
 	{
+		//if (target == "#support" && text.back() == '?') {
+		//
+		//}
 		std::vector<Channel>::iterator it = this->get_channel(target);
 		if (it == this->_serv->channels.end() || it->has_member(this->_nick_name) == false)
 		{
@@ -233,17 +237,27 @@ void User::mode(std::string target, std::string mode) //maybe write mode rpl for
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
 
-void User::join(std::string target, std::string key)
+void User::join(std::string target)
 {
-	std::vector<Channel>::iterator it = this->get_channel(target);
-	std::string msg = ERR_BADCHANMASK + target + " :Channel names have to start with #\r\n";
+	std::vector<std::string>			target_split = split(target, ',');
+	std::vector<std::string>::iterator	it = target_split.begin();
+	std::vector<Channel>::iterator		channel;
+	std::string 						msg;
 
-	if (target[0] != '#')
-		send(this->_fd, msg.c_str(), msg.length(), 0);
-	else if (it == this->_serv->channels.end())
-		this->_serv->channels.push_back(Channel(target, &get_user(this->_nick_name)->second));
-	else
-		it->join(&get_user(this->_nick_name)->second);
+	if (target[0] == '0' && target.length() == 1)
+		return part("", ":*");
+	while (it != target_split.end())
+	{
+		channel = this->get_channel(*it);
+		msg = ERR_BADCHANMASK + *it + " :Channel names have to start with #\r\n";
+		if (it[0][0] != '#')
+			send(this->_fd, msg.c_str(), msg.length(), 0);
+		else if (channel == this->_serv->channels.end())
+			this->_serv->channels.push_back(Channel(*it, &get_user(this->_nick_name)->second));
+		else
+			channel->join(&get_user(this->_nick_name)->second);
+		++it;
+	}
 }
 
 void User::topic(std::string target, std::string topic)
@@ -266,15 +280,45 @@ void User::names(std::string target)
 		it->names(&get_user(this->_nick_name)->second);
 }
 
-void User::part(std::string target, std::string leave_msg) //need to allow multiple channels
+void User::part(std::string target, std::string leave_msg)
 {
-	std::vector<Channel>::iterator it = this->get_channel(target);
-	std::string msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
+	std::vector<std::string>			target_split = split(target, ',');
+	std::vector<std::string>::iterator	it = target_split.begin();
+	std::vector<Channel>::iterator		channel;
+	std::string 						msg;
 
-	if (it != this->_serv->channels.end() && it->has_member(this->_nick_name) == true)
-		it->part(&get_user(this->_nick_name)->second, leave_msg);
-	else
-		send(this->_fd, msg.c_str(), msg.length(), 0);
+	if (leave_msg[1] == '*')
+	{
+		if (leave_msg.length() >= 3)
+			leave_msg.erase(BEGIN, 3);
+		else
+			leave_msg = PART_ALL_MSG;
+		for (std::vector<Channel>::iterator it = _serv->channels.begin(); it != _serv->channels.end(); ++it)
+		{
+			if (it->has_member(_nick_name) == true)
+				it->part(this, leave_msg);
+		}
+		return;
+	}
+	while (it != target_split.end())
+	{
+		channel = this->get_channel(*it);
+		msg = ":irc_serv.42HN.de 442 " + *it + " :not on channel\r\n";
+		if (channel != this->_serv->channels.end() && channel->has_member(this->_nick_name) == true)
+			channel->part(&get_user(this->_nick_name)->second, leave_msg);
+		else
+			send(this->_fd, msg.c_str(), msg.length(), 0);
+		++it;
+	}
+}
+
+void	User::quit(std::string leave_msg)
+{
+	std::cout << "quit leave msg\t" << leave_msg << std::endl;
+	if (leave_msg.compare(":WeeChat") == 0)
+		part("", ":* user disconnected");
+	else 
+		part("", ":* " + leave_msg);
 }
 
 void User::kick(std::string target, std::string params)

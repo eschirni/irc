@@ -220,7 +220,7 @@ int	User::process_msg(void)
 			this->mode(argv[0], argv[1]);
 			break;
 		case JOIN:
-			this->join(argv[0], argv[1]);
+			this->join(argv[0]);
 			break;
 		case TOPIC:
 			this->topic(argv[0], argv[1]);
@@ -230,6 +230,9 @@ int	User::process_msg(void)
 			break;
 		case PART:
 			this->part(argv[0], argv[1]);
+			break;
+		case QUIT:
+			this->quit(argv[0]);
 			break;
 		case KICK:
 			this->kick(argv[0], argv[1]);

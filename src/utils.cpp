@@ -1,5 +1,26 @@
 #include "../include/irc.hpp"
 
+std::vector<std::string>	split(std::string string_to_split, char delimiter)
+{
+	std::vector<std::string>	splited_string;
+	std::string					string_piece;
+	size_t						position;
+
+	while (string_to_split.empty() == false)
+	{
+		position = string_to_split.find(delimiter, BEGIN);
+		if (position == NPOS)
+		{
+			splited_string.push_back(string_to_split);
+			break;
+		}
+		string_piece = string_to_split.substr(BEGIN, position);
+		splited_string.push_back(string_piece);
+		string_to_split.erase(BEGIN, position + 1);
+	}
+	return splited_string;
+}
+
 void	remove_line(std::string& string, int iterations)
 {
 	size_t					crlf;
