@@ -45,7 +45,7 @@
 /***************************** IRC-NUMERICS ************************************/
 
 # define RPL_WELCOME		":irc_serv.42HN.de 001 " + _nick_name + " :Welcome to the Internet Relay Network " + _nick_name + "!" + _user_name + "@" + SERV_ADDR + CRLF
-# define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + CRLF
+# define RPL_YOURHOST		":irc_serv.42HN.de 002 " + _nick_name + " :Your host is " + SERV_NAME + ", running version " + SERV_VERS + ". Type '/info' for help and more information." + CRLF
 # define RPL_CREATED		":irc_serv.42HN.de 003 " + _nick_name + " :This server was created " + SERV_DATE + CRLF
 # define RPL_UMODEIS		":irc_serv.42HN.de 221 "
 # define RPL_LUSERUNKNOWN	":irc_serv.42HN.de 253 0 :Unknown users\r\n"
@@ -54,6 +54,7 @@
 # define RPL_NOWAWAY		"306 RPL_NOWAWAY :You have been marked as being away\r\n"
 # define RPL_BADCHANPASS	":irc_serv.42HN.de 339 Wrong Password\r\n"
 # define RPL_KILLDONE		":irc_serv.42HN.de 361 User was kicked\r\n"
+# define RPL_INFO			":irc_serv.42HN.de 371 "
 # define RPL_YOUREOPER		":irc_serv.42HN.de 381 You are oper\r\n"
 # define ERR_NOSUCHNICK		":irc_serv.42HN.de 401 "
 # define ERR_CANNOTSENDTOCH	":irc_serv.42HN.de 404 "
