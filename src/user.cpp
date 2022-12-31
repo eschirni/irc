@@ -212,6 +212,8 @@ int	User::process_msg(void)
 			this->lusers();
 			break;
 		case AWAY:
+			if (argv[1] != argv[0])
+				argv[0] += " " + argv[1];
 			this->away(argv[0]);
 			break;
 		case MODE:
@@ -237,6 +239,9 @@ int	User::process_msg(void)
 			break;
 		case INVITE:
 			this->invite(argv[0], argv[1]);
+			break;
+		case LIST:
+			this->list();
 			break;
 
 		/* FILE TRANSFER */

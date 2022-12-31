@@ -243,8 +243,8 @@ void User::mode(std::string target, std::string mode) //maybe write mode rpl for
 		if (it == this->_serv->channels.end() || it->has_member(this->_nick_name) == false)
 			msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
 		else if (mode == target)
-			msg = ERR_NOCHANMODES + target + " :chnnel modes not supported\r\n";
-		else if (mode[1] == 'o' || mode[1] == 'O')
+			msg = ERR_NOCHANMODES + target + " :channel modes not supported\r\n";
+		else if (mode[1] == 'o')
 			return (it->op(&get_user(this->_nick_name)->second, mode.substr(0, mode.find(' ')), mode.substr(mode.find(' ') + 1, NPOS)));
 	}
 	else
@@ -371,5 +371,20 @@ void User::invite(std::string name, std::string target)
 		msg = ERR_NOSUCHNICK + name + " :User not found.\r\n";
 	else if (it != this->_serv->channels.end() && it->has_member(this->_nick_name) == true)
 		return (it->invite(&get_user(this->_nick_name)->second, &usr->second));
+	send(this->_fd, msg.c_str(), msg.length(), 0);
+}
+
+void User::list(void)
+{
+	std::vector<Channel>::iterator it = this->_serv->channels.begin();
+	std::string msg;
+
+	while (it != this->_serv->channels.end())
+	{
+		msg = RPL_LIST + it->getName() + " :" + it->getTopic() + CRLF;
+		send(this->_fd, msg.c_str(), msg.length(), 0);
+		++it;
+	}
+	msg = RPL_LISTEND;
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }

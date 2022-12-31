@@ -14,7 +14,7 @@ class Channel
 	private:
 		/********************** PIRVATE METHODS ************************/
 
-		void							print_list(User *usr, bool all = false);
+		void							print_list(User *usr);
 		std::vector<User *>::iterator	get_member(std::string nick);
 		std::vector<User *>::iterator	get_op(std::string nick);
 
@@ -41,6 +41,7 @@ class Channel
 		void		send_all(std::string msg, std::string self = "");
 		bool		has_member(std::string name);
 		std::string	getName(void);
+		std::string	getTopic(void);
 
 };
 
