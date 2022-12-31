@@ -201,10 +201,18 @@ void User::away(std::string away_msg)
 
 void User::mode(std::string target, std::string mode) //maybe write mode rpl for oper and away too so it changes in weechat
 {
-	std::string msg;
+	std::string msg = ERR_UNKNOWNMODE + mode + " :unknown mode\r\n";
 
-	if (target[0] == '#') //todo
-		return ;
+	if (target[0] == '#')
+	{
+		std::vector<Channel>::iterator it = this->get_channel(target);
+		if (it == this->_serv->channels.end() || it->has_member(this->_nick_name) == false)
+			msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
+		else if (mode == target)
+			msg = ERR_NOCHANMODES + target + " :chnnel modes not supported\r\n";
+		else if (mode[1] == 'o' || mode[1] == 'O')
+			return (it->op(&get_user(this->_nick_name)->second, mode.substr(0, mode.find(' ')), mode.substr(mode.find(' ') + 1, NPOS)));
+	}
 	else
 	{
 		if (target != this->_nick_name)
