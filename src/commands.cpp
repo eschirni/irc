@@ -59,14 +59,44 @@ void User::info(void)
 {
 	std::string	msg;
 
-	msg += ":irc_serv.42HN.de 371 \t\r\n";
-	msg += ":irc_serv.42HN.de 371 ATTENTION:\r\n";
-	msg += ":irc_serv.42HN.de 371 This info page is under construction and there is no guarantee for these commands to work or for the descriptions to be complete.\r\n";
-	msg += ":irc_serv.42HN.de 371 \t\r\n";
-	msg += ":irc_serv.42HN.de 371 nick -- Change nickname\r\n";
-	msg += ":irc_serv.42HN.de 371 user -- Set username and other options\r\n";
-	msg += ":irc_serv.42HN.de 371 oper -- Gain operator status\r\n";
-	msg += ":irc_serv.42HN.de 371 quit -- quit the server\r\n";
+	msg += RPL_INFO + std::string("\t") + CRLF;
+	msg += RPL_INFO + std::string("/******************* INFO *******************/") + CRLF;
+	msg += RPL_INFO + std::string("The following contains the commands that our") + CRLF;
+	msg += RPL_INFO + std::string("ft_irc server has implemented. For a more") + CRLF;
+	msg += RPL_INFO + std::string("detailed description of a specific command") + CRLF;
+	msg += RPL_INFO + std::string("type in the following '/help <command>'") + CRLF;
+	msg += RPL_INFO + std::string("\t") + CRLF;
+	msg += RPL_INFO + std::string("Channel Management:") + CRLF;
+	msg += RPL_INFO + std::string("/list -- List all currently open channels") + CRLF;
+	msg += RPL_INFO + std::string("/join -- Join or create channels") + CRLF;
+	msg += RPL_INFO + std::string("/part -- Leave one or more channels") + CRLF;
+	msg += RPL_INFO + std::string("/names -- List all users in a channel") + CRLF;
+	msg += RPL_INFO + std::string("/op -- Enlighten small power onto someone") + CRLF;
+	msg += RPL_INFO + std::string("/topic -- Add or change a channel description") + CRLF;
+	msg += RPL_INFO + std::string("/kick -- Kick an user from a channel") + CRLF;
+	msg += RPL_INFO + std::string("/invite -- Invite an user to a channel") + CRLF;
+	msg += RPL_INFO + std::string("\t") + CRLF;
+	msg += RPL_INFO + std::string("Private Messaging:") + CRLF;
+	msg += RPL_INFO + std::string("/msg -- Message an user privately") + CRLF;
+	msg += RPL_INFO + std::string("/notice -- Message an user privately") + CRLF;
+	msg += RPL_INFO + std::string("/away -- Set yourself as away") + CRLF;
+	msg += RPL_INFO + std::string("\t") + CRLF;
+	msg += RPL_INFO + std::string("Other:") + CRLF;
+	msg += RPL_INFO + std::string("/info -- Get this nice info chart here") + CRLF;
+	msg += RPL_INFO + std::string("/oper -- Enlighten big power onto someone") + CRLF;
+	msg += RPL_INFO + std::string("/mode -- Change an user mode from an user") + CRLF;
+	msg += RPL_INFO + std::string("/lusers -- List information about the server") + CRLF;
+	msg += RPL_INFO + std::string("/nick -- Change your nickname") + CRLF;
+	msg += RPL_INFO + std::string("/ping -- Ping the server") + CRLF;
+	msg += RPL_INFO + std::string("/kill -- Close a client-server connection") + CRLF;
+	msg += RPL_INFO + std::string("/quit -- Leave WeeChat") + CRLF;
+	msg += RPL_INFO + std::string("\t") + CRLF;
+	msg += RPL_INFO + std::string("File Transfer:") + CRLF;
+	msg += RPL_INFO + std::string("/dcc send <user> <filepath>") + CRLF;
+	msg += RPL_INFO + std::string("Upon accepting the file transfer you can find") + CRLF;
+	msg += RPL_INFO + std::string("the file under the following path:") + CRLF;
+	msg += RPL_INFO + std::string("~/.local/share/weechat/xfer/") + CRLF;
+	msg += RPL_INFO + std::string("/********************************************/") + CRLF;
 	send(_fd, msg.c_str(), msg.length(), 0);
 }
 
@@ -318,7 +348,6 @@ void User::part(std::string target, std::string leave_msg)
 
 void	User::quit(std::string leave_msg)
 {
-	std::cout << "quit leave msg\t" << leave_msg << std::endl;
 	if (leave_msg.compare(":WeeChat") == 0)
 		part("", ":* user disconnected");
 	else 
