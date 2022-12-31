@@ -229,6 +229,9 @@ int	User::process_msg(void)
 		case PART:
 			this->part(argv[0], argv[1]);
 			break;
+		case QUIT:
+			this->quit(argv[0]);
+			break;
 
 		/* FILE TRANSFER */
 		// trying to send the file 'file.txt' to user 'someone' via the following command in weechat:

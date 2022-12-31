@@ -44,6 +44,7 @@ class User
 		void	topic(std::string target, std::string topic);
 		void	names(std::string target);
 		void	part(std::string target, std::string leave_msg);
+		void	quit(std::string leave_msg);
 
 		/********************** DATA-MEMBERS ***************************/
 

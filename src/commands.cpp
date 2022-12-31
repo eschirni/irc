@@ -116,6 +116,7 @@ void User::kill(std::string nick, std::string reason)
 		msg = ERR_NOSUCHNICK + nick + " :User not found.\r\n";
 	else if (this->_mode == 'o')
 	{
+		it->second.part("", ":* user has been killed");
 		msg = ":irc_serv.42HN.de 371 You have been killed: " + reason + "\r\n";
 		send(it->second.getFd(), msg.c_str(), msg.length(), 0);
 		msg = RPL_KILLDONE;
@@ -298,4 +299,13 @@ void User::part(std::string target, std::string leave_msg)
 			send(this->_fd, msg.c_str(), msg.length(), 0);
 		++it;
 	}
+}
+
+void	User::quit(std::string leave_msg)
+{
+	std::cout << "quit leave msg\t" << leave_msg << std::endl;
+	if (leave_msg.empty())
+		part("", ":* user disconnected");
+	else 
+		part("", ":* " + leave_msg);
 }
