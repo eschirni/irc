@@ -202,10 +202,18 @@ void User::away(std::string away_msg)
 
 void User::mode(std::string target, std::string mode) //maybe write mode rpl for oper and away too so it changes in weechat
 {
-	std::string msg;
+	std::string msg = ERR_UNKNOWNMODE + mode + " :unknown mode\r\n";
 
-	if (target[0] == '#') //todo
-		return ;
+	if (target[0] == '#')
+	{
+		std::vector<Channel>::iterator it = this->get_channel(target);
+		if (it == this->_serv->channels.end() || it->has_member(this->_nick_name) == false)
+			msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
+		else if (mode == target)
+			msg = ERR_NOCHANMODES + target + " :chnnel modes not supported\r\n";
+		else if (mode[1] == 'o' || mode[1] == 'O')
+			return (it->op(&get_user(this->_nick_name)->second, mode.substr(0, mode.find(' ')), mode.substr(mode.find(' ') + 1, NPOS)));
+	}
 	else
 	{
 		if (target != this->_nick_name)
@@ -308,4 +316,28 @@ void	User::quit(std::string leave_msg)
 		part("", ":* user disconnected");
 	else 
 		part("", ":* " + leave_msg);
+}
+
+void User::kick(std::string target, std::string params)
+{
+	std::vector<Channel>::iterator it = this->get_channel(target);
+	std::string msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
+
+	if (it != this->_serv->channels.end() && it->has_member(this->_nick_name) == true)
+		it->kick(&get_user(this->_nick_name)->second, params.substr(0, params.find(' ')), params.substr(params.find(' ') + 1, NPOS));
+	else
+		send(this->_fd, msg.c_str(), msg.length(), 0);
+}
+
+void User::invite(std::string name, std::string target)
+{
+	std::vector<Channel>::iterator it = this->get_channel(target);
+	mapite_t usr = this->get_user(name);
+	std::string msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
+
+	if (usr == this->_serv->users.end())
+		msg = ERR_NOSUCHNICK + name + " :User not found.\r\n";
+	else if (it != this->_serv->channels.end() && it->has_member(this->_nick_name) == true)
+		return (it->invite(&get_user(this->_nick_name)->second, &usr->second));
+	send(this->_fd, msg.c_str(), msg.length(), 0);
 }

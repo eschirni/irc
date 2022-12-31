@@ -231,6 +231,11 @@ int	User::process_msg(void)
 			break;
 		case QUIT:
 			this->quit(argv[0]);
+		case KICK:
+			this->kick(argv[0], argv[1]);
+			break;
+		case INVITE:
+			this->invite(argv[0], argv[1]);
 			break;
 
 		/* FILE TRANSFER */

@@ -8,7 +8,7 @@ Channel::Channel(std::string name, User *creator): _name(name), _topic("")
 	this->join(creator);
 }
 
-void Channel::print_list(User *usr)
+void Channel::print_list(User *usr, bool all)
 {
 	std::string ret = "";
 	std::vector<User *>::iterator mem = this->_members.begin();
@@ -25,9 +25,15 @@ void Channel::print_list(User *usr)
 		++ops;
 	}
 	std::string msg = ":irc_serv.42HN.de 353 " + usr->getNickName() + " = " + this->_name + " : " + ret + "\r\n";
-	send(usr->getFd(), msg.c_str(), msg.size(), 0);
+	if (all == true)
+		send_all(msg);
+	else
+		send(usr->getFd(), msg.c_str(), msg.size(), 0);
 	msg = ":irc_serv.42HN.de 366 " + usr->getNickName() + " " + this->_name + " :End of Names list\r\n";
-	send(usr->getFd(), msg.c_str(), msg.size(), 0);
+	if (all == true)
+		send_all(msg);
+	else
+		send(usr->getFd(), msg.c_str(), msg.size(), 0);
 }
 
 void Channel::send_all(std::string msg, std::string self)
@@ -95,11 +101,75 @@ void Channel::names(User *usr)
 	this->print_list(usr);
 }
 
-void Channel::part(User *usr, std::string leave_msg) //check if user is op and if so remove from _ops
+void Channel::part(User *usr, std::string leave_msg)
 {
 	std::string reply = ":" + usr->getNickName() + " PART " + this->_name + " " + leave_msg + "\r\n";
 	this->send_all(reply);
 	this->_members.erase(this->get_member(usr->getNickName()));
+	if (this->get_op(usr->getNickName()) != this->_ops.end())
+		this->_ops.erase(this->get_op(usr->getNickName()));
+}
+
+void Channel::op(User *usr, std::string mode, std::string name)
+{
+	std::string msg = "";
+
+	if (name == mode)
+		name = usr->getNickName();
+	std::vector<User *>::iterator it = this->get_member(name);
+	if (it == this->_members.end())
+		msg = ":irc_serv.42HN.de 442 " + this->_name + " :" + name + " not on channel\r\n";
+	else if (this->get_op(usr->getNickName()) == this->_ops.end())
+		msg = ":irc_serv.42HN.de 482 " + this->_name + " :you are not an operator of this channel\r\n";
+	else if (mode[0] == '-')
+	{
+		it = this->get_op(name);
+		if (it != this->_ops.end())
+		{
+			this->_ops.erase(it);
+			this->print_list(usr, true);
+		}
+		else
+			msg = ":irc_serv.42HN.de 482 " + this->_name + " :" + name + " is not an operator of this channel\r\n";
+	}
+	else
+	{
+		if (this->get_op(name) == this->_ops.end())
+		{
+			this->_ops.push_back(*it);
+			this->print_list(usr, true);
+		}
+	}
+	send(usr->getFd(), msg.c_str(), msg.length(), 0);
+}
+
+void Channel::kick(User *usr, std::string name, std::string kick_msg)
+{
+	std::string msg = ":" + usr->getNickName() + " KICK " + this->_name + " " + name + " " + kick_msg + "\r\n";
+	std::vector<User *>::iterator it = this->get_member(name);
+
+	if (this->get_op(usr->getNickName()) == this->_ops.end())
+		msg = ":irc_serv.42HN.de 482 " + this->_name + " :you are not an operator of this channel\r\n";
+	else if (it == this->_members.end())
+		msg = ":irc_serv.42HN.de 442 " + this->_name + " :" + name + " not on channel\r\n";
+	if (this->get_op(usr->getNickName()) == this->_ops.end() || it == this->_members.end())
+		send(usr->getFd(), msg.c_str(), msg.length(), 0);
+	else
+	{
+		send_all(msg);
+		(*it)->part(this->_name, "user has been kicked");
+	}
+}
+
+void Channel::invite(User *usr, User *target) //check for away
+{
+	std::string msg = ":irc_serv.42HN.de 341 " + usr->getNickName() + " " + target->getNickName() + " " + this->_name + "\r\n";
+
+	if (this->get_op(usr->getNickName()) == this->_ops.end())
+		msg = ":irc_serv.42HN.de 482 " + this->_name + " :you are not an operator of this channel\r\n";
+	send(usr->getFd(), msg.c_str(), msg.length(), 0);
+	if (this->get_op(usr->getNickName()) != this->_ops.end())
+		send(target->getFd(), msg.c_str(), msg.length(), 0);
 }
 
 std::string Channel::getName(void)
