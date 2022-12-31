@@ -157,8 +157,19 @@ void Channel::kick(User *usr, std::string name, std::string kick_msg)
 	else
 	{
 		send_all(msg);
-		(*it)->part(this->_name, kick_msg);
+		(*it)->part(this->_name, "user has been kicked");
 	}
+}
+
+void Channel::invite(User *usr, User *target) //check for away
+{
+	std::string msg = ":irc_serv.42HN.de 341 " + usr->getNickName() + " " + target->getNickName() + " " + this->_name + "\r\n";
+
+	if (this->get_op(usr->getNickName()) == this->_ops.end())
+		msg = ":irc_serv.42HN.de 482 " + this->_name + " :you are not an operator of this channel\r\n";
+	send(usr->getFd(), msg.c_str(), msg.length(), 0);
+	if (this->get_op(usr->getNickName()) != this->_ops.end())
+		send(target->getFd(), msg.c_str(), msg.length(), 0);
 }
 
 std::string Channel::getName(void)

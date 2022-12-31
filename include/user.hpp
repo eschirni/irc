@@ -44,6 +44,7 @@ class User
 		void	topic(std::string target, std::string topic);
 		void	names(std::string target);
 		void	kick(std::string target, std::string params);
+		void	invite(std::string name, std::string target);
 
 		/********************** DATA-MEMBERS ***************************/
 
@@ -76,7 +77,7 @@ class User
 		int			process_msg(void);
 
 		/************************ COMMANDS *****************************/
-		
+
 		void	part(std::string target, std::string leave_msg);
 };
 

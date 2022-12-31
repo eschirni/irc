@@ -287,3 +287,16 @@ void User::kick(std::string target, std::string params)
 	else
 		send(this->_fd, msg.c_str(), msg.length(), 0);
 }
+
+void User::invite(std::string name, std::string target)
+{
+	std::vector<Channel>::iterator it = this->get_channel(target);
+	mapite_t usr = this->get_user(name);
+	std::string msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
+
+	if (usr == this->_serv->users.end())
+		msg = ERR_NOSUCHNICK + name + " :User not found.\r\n";
+	else if (it != this->_serv->channels.end() && it->has_member(this->_nick_name) == true)
+		return (it->invite(&get_user(this->_nick_name)->second, &usr->second));
+	send(this->_fd, msg.c_str(), msg.length(), 0);
+}

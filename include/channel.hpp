@@ -37,6 +37,7 @@ class Channel
 		void		part(User *usr, std::string leave_msg);
 		void		op(User *usr, std::string mode, std::string name);
 		void		kick(User *usr, std::string name, std::string kick_msg);
+		void		invite(User *usr, User *target);
 		void		send_all(std::string msg, std::string self = "");
 		bool		has_member(std::string name);
 		std::string	getName(void);
