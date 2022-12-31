@@ -43,7 +43,6 @@ class User
 		void	join(std::string target, std::string key);
 		void	topic(std::string target, std::string topic);
 		void	names(std::string target);
-		void	part(std::string target, std::string leave_msg);
 		void	kick(std::string target, std::string params);
 
 		/********************** DATA-MEMBERS ***************************/
@@ -75,6 +74,10 @@ class User
 		int			getFd(void) const;
 		void		setApproved(bool approval);
 		int			process_msg(void);
+
+		/************************ COMMANDS *****************************/
+		
+		void	part(std::string target, std::string leave_msg);
 };
 
 

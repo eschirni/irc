@@ -101,11 +101,13 @@ void Channel::names(User *usr)
 	this->print_list(usr);
 }
 
-void Channel::part(User *usr, std::string leave_msg) //check if user is op and if so remove from _ops
+void Channel::part(User *usr, std::string leave_msg)
 {
 	std::string reply = ":" + usr->getNickName() + " PART " + this->_name + " " + leave_msg + "\r\n";
 	this->send_all(reply);
 	this->_members.erase(this->get_member(usr->getNickName()));
+	if (this->get_op(usr->getNickName()) != this->_ops.end())
+		this->_ops.erase(this->get_op(usr->getNickName()));
 }
 
 void Channel::op(User *usr, std::string mode, std::string name)
@@ -153,7 +155,10 @@ void Channel::kick(User *usr, std::string name, std::string kick_msg)
 	if (this->get_op(usr->getNickName()) == this->_ops.end() || it == this->_members.end())
 		send(usr->getFd(), msg.c_str(), msg.length(), 0);
 	else
+	{
 		send_all(msg);
+		(*it)->part(this->_name, kick_msg);
+	}
 }
 
 std::string Channel::getName(void)
