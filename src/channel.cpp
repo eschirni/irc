@@ -7,7 +7,7 @@ Channel::Channel(std::string name, User *creator): _name(name), _topic("")
 	this->join(creator);
 }
 
-void Channel::print_list(User *usr, bool all)
+void Channel::print_list(User *usr)
 {
 	std::string ret = "";
 	std::vector<User *>::iterator mem = this->_members.begin();
@@ -24,15 +24,9 @@ void Channel::print_list(User *usr, bool all)
 		++ops;
 	}
 	std::string msg = ":irc_serv.42HN.de 353 " + usr->getNickName() + " = " + this->_name + " : " + ret + "\r\n";
-	if (all == true)
-		send_all(msg);
-	else
-		send(usr->getFd(), msg.c_str(), msg.size(), 0);
+	send(usr->getFd(), msg.c_str(), msg.size(), 0);
 	msg = ":irc_serv.42HN.de 366 " + usr->getNickName() + " " + this->_name + " :End of Names list\r\n";
-	if (all == true)
-		send_all(msg);
-	else
-		send(usr->getFd(), msg.c_str(), msg.size(), 0);
+	send(usr->getFd(), msg.c_str(), msg.size(), 0);
 }
 
 void Channel::send_all(std::string msg, std::string self)
@@ -126,7 +120,8 @@ void Channel::op(User *usr, std::string mode, std::string name)
 		if (it != this->_ops.end())
 		{
 			this->_ops.erase(it);
-			this->print_list(usr, true);
+			msg = ":" + usr->getNickName() + " MODE " + this->_name + " " + mode + " " + name + "\r\n";
+			this->send_all(msg, usr->getNickName());
 		}
 		else
 			msg = ":irc_serv.42HN.de 482 " + this->_name + " :" + name + " is not an operator of this channel\r\n";
@@ -136,7 +131,8 @@ void Channel::op(User *usr, std::string mode, std::string name)
 		if (this->get_op(name) == this->_ops.end())
 		{
 			this->_ops.push_back(*it);
-			this->print_list(usr, true);
+			msg = ":" + usr->getNickName() + " MODE " + this->_name + " " + mode + " " + name + "\r\n";
+			this->send_all(msg, usr->getNickName());
 		}
 	}
 	send(usr->getFd(), msg.c_str(), msg.length(), 0);

@@ -214,7 +214,7 @@ void User::mode(std::string target, std::string mode) //maybe write mode rpl for
 			msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
 		else if (mode == target)
 			msg = ERR_NOCHANMODES + target + " :channel modes not supported\r\n";
-		else if (mode[1] == 'o' || mode[1] == 'O')
+		else if (mode[1] == 'o')
 			return (it->op(&get_user(this->_nick_name)->second, mode.substr(0, mode.find(' ')), mode.substr(mode.find(' ') + 1, NPOS)));
 	}
 	else
