@@ -40,11 +40,14 @@ class User
 		void	lusers(void);
 		void	away(std::string reply);
 		void	mode(std::string target, std::string mode);
-		void	join(std::string target, std::string key);
+		void	join(std::string target);
 		void	topic(std::string target, std::string topic);
 		void	names(std::string target);
+		void	part(std::string target, std::string leave_msg);
+		void	quit(std::string leave_msg);
 		void	kick(std::string target, std::string params);
 		void	invite(std::string name, std::string target);
+    
 
 		/********************** DATA-MEMBERS ***************************/
 
