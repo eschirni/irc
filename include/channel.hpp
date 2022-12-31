@@ -41,6 +41,7 @@ class Channel
 		void		send_all(std::string msg, std::string self = "");
 		bool		has_member(std::string name);
 		std::string	getName(void);
+		std::string	getTopic(void);
 
 };
 

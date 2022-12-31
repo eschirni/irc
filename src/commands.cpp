@@ -344,3 +344,18 @@ void User::invite(std::string name, std::string target)
 		return (it->invite(&get_user(this->_nick_name)->second, &usr->second));
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
+
+void User::list(void)
+{
+	std::vector<Channel>::iterator it = this->_serv->channels.begin();
+	std::string msg;
+
+	while (it != this->_serv->channels.end())
+	{
+		msg = RPL_LIST + it->getName() + " :" + it->getTopic() + CRLF;
+		send(this->_fd, msg.c_str(), msg.length(), 0);
+		++it;
+	}
+	msg = RPL_LISTEND;
+	send(this->_fd, msg.c_str(), msg.length(), 0);
+}

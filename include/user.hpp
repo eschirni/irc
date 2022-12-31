@@ -46,6 +46,7 @@ class User
 		void	quit(std::string leave_msg);
 		void	kick(std::string target, std::string params);
 		void	invite(std::string name, std::string target);
+		void	list(void);
     
 
 		/********************** DATA-MEMBERS ***************************/

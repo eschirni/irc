@@ -1,6 +1,5 @@
 #include "../include/channel.hpp"
 #include <netinet/in.h>
-#include <iostream> //debug
 
 Channel::Channel(std::string name, User *creator): _name(name), _topic("")
 {
@@ -175,6 +174,11 @@ void Channel::invite(User *usr, User *target) //check for away
 std::string Channel::getName(void)
 {
 	return this->_name;
+}
+
+std::string Channel::getTopic(void)
+{
+	return this->_topic;
 }
 
 bool Channel::has_member(std::string name)
