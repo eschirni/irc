@@ -209,7 +209,7 @@ void User::mode(std::string target, std::string mode) //maybe write mode rpl for
 		if (it == this->_serv->channels.end() || it->has_member(this->_nick_name) == false)
 			msg = ":irc_serv.42HN.de 442 " + target + " :not on channel\r\n";
 		else if (mode == target)
-			msg = ERR_NOCHANMODES + target + " :chnnel modes not supported\r\n";
+			msg = ERR_NOCHANMODES + target + " :channel modes not supported\r\n";
 		else if (mode[1] == 'o' || mode[1] == 'O')
 			return (it->op(&get_user(this->_nick_name)->second, mode.substr(0, mode.find(' ')), mode.substr(mode.find(' ') + 1, NPOS)));
 	}
@@ -233,7 +233,7 @@ void User::mode(std::string target, std::string mode) //maybe write mode rpl for
 	send(this->_fd, msg.c_str(), msg.length(), 0);
 }
 
-void User::join(std::string target, std::string key) // need to implement multiple targets & keys, 0 to leave all channels
+void User::join(std::string target, std::string key)
 {
 	std::vector<Channel>::iterator it = this->get_channel(target);
 	std::string msg = ERR_BADCHANMASK + target + " :Channel names have to start with #\r\n";
